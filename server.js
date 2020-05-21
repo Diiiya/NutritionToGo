@@ -2,9 +2,10 @@ const express = require('express')
 const app = express()
 const port = 3000
 const dbConfig = require('./config/database').config
+//router imports
+const indexRouter = require('./routes/indexRouter');
 
 var Connection = require('tedious').Connection
-
 var connection = new Connection(dbConfig);
 
 connection.on('connect', (err) => {
@@ -15,8 +16,7 @@ connection.on('connect', (err) => {
     connection.close()
 })
 
+app.use('/', indexRouter); //Home page
 
- 
-app.get('/', (req, res) => res.send('Hello World!'))
  
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
