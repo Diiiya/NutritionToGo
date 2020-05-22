@@ -7,17 +7,13 @@ import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
 import Header from "components/Header/Header.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import Badge from "components/Badge/Badge.js";
-import CustomTabs from "components/CustomTabs/CustomTabs.js";
 import Button from "components/CustomButtons/Button.js";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
-import CustomInput from "components/CustomInput/CustomInput.js";
 
 import restaurantImage from "assets/img/Rest1.jpg";
-import caesarSaImage from "assets/img/CaesarSa.png";
-import greekSaImage from "assets/img/Greeksalad.png";
 import styles from "assets/jss/material-kit-react/views/componentsSections/typographyStyle.js";
+import { Link } from "react-router-dom";
 const useStyles = makeStyles(styles);
 
 export default function DeliveryDetailsPage() {
@@ -25,7 +21,7 @@ export default function DeliveryDetailsPage() {
     const [selectedEnabled, setSelectedEnabled] = React.useState("b");
 
     return (
-        
+
         <div>
             <Header
                 brand="NUTRITION TO GO"
@@ -49,9 +45,8 @@ export default function DeliveryDetailsPage() {
 
                 <GridContainer style={{ marginTop: "60px" }}>
 
-                    <GridItem xs={12} sm={12} md={4} style={{ marginTop: "60px", backgroundColor: "white", height: "450px" }}>
-                        <div>
-                            {/*<h3 style={{ alignText: "center" }}><strong>YOUR BASKET:</strong></h3>*/}
+                    <GridItem xs={12} sm={12} md={5} style={{ marginTop: "60px", backgroundColor: "white", height: "450px", borderRight: '10px solid #e5e5e5' }}>
+                        <div style={{margin: "20px"}}>
                             <div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>Caesar salad</h4>
@@ -126,7 +121,6 @@ export default function DeliveryDetailsPage() {
 
                         </div>
                     </GridItem>
-                    <GridItem xs={12} sm={12} md={1} style={{ marginTop: "60px", height: "450px" }}></GridItem>
                     <GridItem xs={12} sm={12} md={7} style={{ marginTop: "60px", backgroundColor: "white", height: "450px" }}>
                         <GridContainer>
                             <GridItem xs={12} sm={12} md={6}>
@@ -157,10 +151,12 @@ export default function DeliveryDetailsPage() {
                                 </div>
                             </GridItem>
                             <GridItem xs={12} sm={12} md={6} style={{ display: 'flex', alignItems: 'center' }}>
-                                    <h4>Estimated delivery time: <strong>20:10</strong></h4>
+                                <h4>Estimated delivery time: <strong>20:10</strong></h4>
                             </GridItem>
                         </GridContainer>
-                        <Button style={{ float: "right" }} color="success" >GO BACK TO HOME PAGE</Button> {/*onClick={() => browserHistory.push('/restaurant-page')}*/}
+                        <Link to={"/restaurant-page"}>
+                            <Button style={{ float: "right" }} color="success">GO BACK TO HOME PAGE</Button>
+                        </Link>
                     </GridItem>
                 </GridContainer>
             </div>
