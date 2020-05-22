@@ -1,20 +1,28 @@
 const express = require('express')
 const app = express()
 const port = 3000
-const dbConfig = require('./config/database').config
+const DBdevConfig = require('./config/database').development;
+const Sequelize = require('sequelize'); 
 //router imports
 const indexRouter = require('./routes/indexRouter');
 
-var Connection = require('tedious').Connection
-var connection = new Connection(dbConfig);
+const sequelize = new Sequelize(DBdevConfig.database, DBdevConfig.username, DBdevConfig.password, {
+    host: DBdevConfig.host,
+    dialect: DBdevConfig.dialect,
+    define: {
+      timestamps: false
+    }
+  });
+ 
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
-connection.on('connect', (err) => {
-    if(err) {
-        console.log('Error: ' + err)
-    } else
-    console.log(`Connection to database ${dbConfig.server} is successfully established!`)
-    connection.close()
-})
 
 app.use('/', indexRouter); //Home page
 
