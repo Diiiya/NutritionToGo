@@ -37,23 +37,29 @@ describe('Model testing', () =>{
         //How do I test more than one association at a time??
         context('associations', () => {
             const Order = 'Some Order model'
-            //const MenuCategory = 'MenuCategory'
-    
-            before(() =>{
-                Model.associate({Order})
-            })
-            /*before(() =>{
-                Model.associate(model => {
-                    model.Order
-                    model.MenuCategory
+            const MenuCategory = 'Some MenuCategory model'
+
+            describe('Order association', () => {
+                
+                before(() =>{
+                    Model.associate({Order})
                 })
-            })*/
-            it('defined a hasMany association with Order', () => {
-                expect(Model.hasMany).to.have.been.calledWith(Order, {foreignKey: 'restaurantId', onDelete: 'cascade'})
+    
+                it('hasMany Order', () => {
+                    expect(Model.hasMany).to.have.been.calledWith(Order, {foreignKey: 'restaurantId', onDelete: 'cascade'})
+                })
             })
-            /*it('defined a hasMany association with MenuCategory', () => {
-                expect(Model.hasMany).to.have.been.calledWith(MenuCategory, {foreignKey: 'restaurantId', onDelete: 'cascade'})
-            })*/
+
+            describe('MenuCategory association', () => {
+                
+                before(() =>{
+                    Model.associate({MenuCategory})
+                })
+                
+                it('hasMany MenuCategory', () => {
+                    expect(Model.hasMany).to.have.been.calledWith(MenuCategory, {foreignKey: 'restaurantId', onDelete: 'cascade'})
+                })
+            })
         })
     })
 
