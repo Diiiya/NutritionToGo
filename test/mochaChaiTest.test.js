@@ -5,7 +5,7 @@ var numbers = [1,2,3,4,5];
 
 //test if chai works properly
 describe('Test Mocha & Chai', function() {
-    describe('Array \'expect()\'-style', function() {
+    context('Array \'expect()\'-style', function() {
         it('is array and includes number 2', function() {
             expect(numbers).to.be.an('array').that.includes(2);
         })
@@ -17,7 +17,7 @@ describe('Test Mocha & Chai', function() {
         })
     })
     
-    describe('Array \'assert\'-style', function() {
+    context('Array \'assert\'-style', function() {
         it('is array', function() {
             assert.isArray(numbers, 'is array of numbers')
         })
