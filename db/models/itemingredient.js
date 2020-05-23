@@ -1,7 +1,10 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const ItemIngredient = sequelize.define('ItemIngredient', {
-    ingredientName: DataTypes.STRING
+    ingredientName: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    }
   }, {});
   ItemIngredient.associate = function(models) {
     ItemIngredient.belongsToMany(models.MenuItem, {

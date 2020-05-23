@@ -1,21 +1,52 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Restaurant = sequelize.define('Restaurant', {
-    name: DataTypes.STRING,
-    logoRelativePath: DataTypes.STRING,
-    openAtHour: DataTypes.INTEGER,
-    closedAtHour: DataTypes.INTEGER,
-    deliveryPrice: DataTypes.DECIMAL,
-    deliveryMinimumOrderAmount: DataTypes.INTEGER,
-    deliveryTimeMinutes: DataTypes.INTEGER,
-    rating: DataTypes.DOUBLE,
-    address: DataTypes.STRING,
-    postalCode: DataTypes.INTEGER,
-    city: DataTypes.STRING
+    name: {
+      type: DataTypes.STRING(40),
+      allowNull: false,
+    },
+    logoRelativePath: {
+      type: DataTypes.STRING(255)
+    },
+    openAtHour: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    closedAtHour: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    deliveryPrice: {
+      type: DataTypes.DECIMAL(5, 2),
+      allowNull: false
+    },
+    deliveryMinimumOrderAmount: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    deliveryTimeMinutes: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    rating: {
+      type: DataTypes.FLOAT
+    },
+    address: {
+      type: DataTypes.STRING(120),
+      allowNull: false
+    },
+    postalCode: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    city: {
+      type: DataTypes.STRING(60),
+      allowNull: false
+    }
   }, {});
   Restaurant.associate = function(models) {
-    Restaurant.hasMany(models.MenuCategory, {foreignKey: 'restaurantId'})
-    Restaurant.hasMany(models.Order, {foreignKey: 'restaurantId'})
+    Restaurant.hasMany(models.MenuCategory, {onDelete: 'cascade', foreignKey: 'restaurantId'})
+    Restaurant.hasMany(models.Order, {onDelete: 'cascade', foreignKey: 'restaurantId'})
   };
   return Restaurant;
 };

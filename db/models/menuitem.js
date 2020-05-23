@@ -1,9 +1,18 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const MenuItem = sequelize.define('MenuItem', {
-    itemName: DataTypes.STRING,
-    price: DataTypes.DECIMAL,
-    categoryId: DataTypes.INTEGER
+    itemName: {
+      type: DataTypes.STRING(40),
+      allowNull: false
+    },
+    price: {
+      type: DataTypes.DECIMAL(6, 2),
+      allowNull: false
+    },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    }
   }, {});
   MenuItem.associate = function(models) {
     MenuItem.belongsTo(models.MenuCategory, {foreignKey: 'categoryId'})
