@@ -29,9 +29,20 @@ describe('Model testing', () =>{
         
         //has properties
         context('properties', () => {
-            ;['name', 'deliveryMinimumOrderAmount', 'city'].forEach(
-                checkPropertyExists(instance)
-            )
+            ;[
+                'name', 
+                'logoRelativePath', 
+                'openAtHour', 
+                'closedAtHour', 
+                'deliveryPrice', 
+                'deliveryMinimumOrderAmount', 
+                'deliveryTimeMinutes', 
+                'rating', 
+                'address', 
+                'postalCode', 
+                'city'
+            ]
+            .forEach(checkPropertyExists(instance))
         })
     
         //How do I test more than one association at a time??
@@ -73,19 +84,37 @@ describe('Model testing', () =>{
         
         //has properties
         context('properties', () => {
-            ;['categoryName', 'restaurantId'].forEach(
-                checkPropertyExists(instance)
-            )
+            ;[
+                'categoryName', 
+                'restaurantId'
+            ]
+            .forEach(checkPropertyExists(instance))
         })
     
         context('associations', () => {
-            const Restaurant = 'Some Restaurant model'
-    
-            before(() =>{
-                Model.associate({Restaurant})
+            const Restaurant = 'Some Restaurant model';
+            const MenuItem = 'Some MenuItem model';
+            
+            describe('Restaurant association', () => {
+
+                before(() =>{
+                    Model.associate({Restaurant})
+                })
+
+                it('belongsTo Restaurant', () => {
+                    expect(Model.belongsTo).to.have.been.calledWith(Restaurant, {foreignKey: 'restaurantId'})
+                })
             })
-            it('defined a belongsTo association with Restaurant', () => {
-                expect(Model.belongsTo).to.have.been.calledWith(Restaurant, {foreignKey: 'restaurantId'})
+            
+            describe('MenuItem association', () => {
+
+                before(() =>{
+                    Model.associate({MenuItem})
+                })
+                
+                it('hasMany MenuItem', () => {
+                    expect(Model.hasMany).to.have.been.calledWith(MenuItem, {foreignKey: 'categoryId', onDelete: 'cascade'})
+                })
             })
         })
     })
@@ -100,19 +129,42 @@ describe('Model testing', () =>{
         
         //has properties
         context('properties', () => {
-            ;['itemName', 'price', 'categoryId'].forEach(
-                checkPropertyExists(instance)
-            )
+            ;[
+                'itemName', 
+                'price', 
+                'categoryId'
+            ]
+            .forEach(checkPropertyExists(instance))
         })
     
         context('associations', () => {
             const MenuCategory = 'Some Category model'
-    
-            before(() =>{
-                Model.associate({MenuCategory})
+            const ItemIngredient = 'Some ItemIngredient model'
+            
+            describe('MenuCategory association', () => {
+
+                before(() =>{
+                    Model.associate({MenuCategory})
+                })
+
+                it('belongsTo MenuCategory', () => {
+                    expect(Model.belongsTo).to.have.been.calledWith(MenuCategory, {foreignKey: 'categoryId'})
+                })
             })
-            it('defined a belongsTo association with Category', () => {
-                expect(Model.belongsTo).to.have.been.calledWith(MenuCategory, {foreignKey: 'categoryId'})
+            
+            describe('ItemIngredient association', () => {
+
+                before(() =>{
+                    Model.associate({ItemIngredient})
+                })
+
+                it('belongsToMany ItemIngredient', () => {
+                    expect(Model.belongsToMany).to.have.been.calledWith(ItemIngredient, {
+                        as: 'ingredient',
+                        foreignKey: 'MenuItemsid',
+                        through: 'ItemsIngredients'    
+                      })
+                })
             })
         })
     })
@@ -127,23 +179,28 @@ describe('Model testing', () =>{
         
         //has properties
         context('properties', () => {
-            ;['ingredientName'].forEach(
-                checkPropertyExists(instance)
-            )
+            ;[
+                'ingredientName'
+            ]
+            .forEach(checkPropertyExists(instance))
         })
     
         context('associations', () => {
             const MenuItem = 'Some MenuItem model'
-    
-            before(() =>{
-                Model.associate({MenuItem})
-            })
-            it('defined a belongsToMany association with MenuItem', () => {
-                expect(Model.belongsToMany).to.have.been.calledWith(MenuItem, {
-                    as: 'item',
-                    foreignKey: 'ItemsIngredientsid',
-                    through: 'ItemsIngredients'    
-                  })
+            
+            describe('MenuItem association', () => {
+
+                before(() =>{
+                    Model.associate({MenuItem})
+                })
+
+                it('belongsToMany MenuItem', () => {
+                    expect(Model.belongsToMany).to.have.been.calledWith(MenuItem, {
+                        as: 'item',
+                        foreignKey: 'ItemsIngredientsid',
+                        through: 'ItemsIngredients'    
+                      })
+                })
             })
         })
     })
@@ -158,19 +215,44 @@ describe('Model testing', () =>{
         
         //has properties
         context('properties', () => {
-            ;['cusFirstName', 'city', 'restaurantId'].forEach(
-                checkPropertyExists(instance)
-            )
+            ;[
+                'cusFirstName', 
+                'cusSurname',
+                'address',
+                'postalCode',
+                'city',
+                'phoneNumber',
+                'delivery',
+                'totalPrice', 
+                'restaurantId'
+            ]
+            .forEach(checkPropertyExists(instance))
         })
     
         context('associations', () => {
-            const Restaurant = 'Some Restaurant model'
-    
-            before(() =>{
-                Model.associate({Restaurant})
+            const Restaurant = 'Some Restaurant model';
+            const OrderItem = 'Some OrderItem model';
+            
+            describe('Restaurant association', () => {
+
+                before(() =>{
+                    Model.associate({Restaurant})
+                })
+
+                it('belongsTo Restaurant', () => {
+                    expect(Model.belongsTo).to.have.been.calledWith(Restaurant, {foreignKey: 'restaurantId'})
+                })
             })
-            it('defined a belongsTo association with Restaurant', () => {
-                expect(Model.belongsTo).to.have.been.calledWith(Restaurant, {foreignKey: 'restaurantId'})
+
+            describe('OrderItem association', () => {
+
+                before(() =>{
+                    Model.associate({OrderItem})
+                })
+                
+                it('hasMany OrderItem', () => {
+                    expect(Model.hasMany).to.have.been.calledWith(OrderItem, {foreignKey: 'orderId', onDelete: 'cascade'})
+                })
             })
         })
     })
@@ -185,19 +267,27 @@ describe('Model testing', () =>{
         
         //has properties
         context('properties', () => {
-            ;['itemName', 'quantity', 'orderId'].forEach(
-                checkPropertyExists(instance)
-            )
+            ;[
+                'itemName', 
+                'quantity', 
+                'price',
+                'orderId'
+            ]
+            .forEach(checkPropertyExists(instance))
         })
     
         context('associations', () => {
             const Order = 'Some Order model'
+            
+            describe('Order association', () => {
+
+                before(() =>{
+                    Model.associate({Order})
+                })
     
-            before(() =>{
-                Model.associate({Order})
-            })
-            it('defined a belongsTo association with Order', () => {
-                expect(Model.belongsTo).to.have.been.calledWith(Order, {foreignKey: 'orderId'})
+                it('belongsTo Order', () => {
+                    expect(Model.belongsTo).to.have.been.calledWith(Order, {foreignKey: 'orderId'})
+                })
             })
         })
     })
