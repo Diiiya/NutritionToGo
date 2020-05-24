@@ -173,7 +173,7 @@ exports.testData = {
             ingredientName: 'iceberg salad' //10
         },
         {
-            ingredientName: ' bacon' //10
+            ingredientName: 'bacon' //10
         }
     ]
 }
