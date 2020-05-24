@@ -3,6 +3,13 @@
  * preparings or settings 
  */
 
+ const models = require('../db/models');
+ const RestaurantModel = models.Restaurant;
+ const MenuCategoryModel = models.MenuCategory;
+ const MenuItemModel = models.MenuItem;
+ const ItemIngredientModel = models.ItemIngredient;
+ const testData = require('./testData').testData;
+
 /**Method cleanDB() will call db.model.truncate({cascade: true}).
  * 
  * TRUNCATE deletes all rows in a table without the table itself and 
@@ -34,3 +41,29 @@ exports.cleanDB = async (db) => {
 /**Method seedDB will fill db with data on our tables that users can
  * only read from: Restaurant, MenuCategory, MenuItem, ItemIngredient
  */
+
+exports.seedDB = async () => {
+    await RestaurantModel.bulkCreate(testData.restaurants);
+    await MenuCategoryModel.bulkCreate(testData.menuCategories);
+    await MenuItemModel.bulkCreate(testData.menuItems);
+    await ItemIngredientModel.bulkCreate(testData.itemIngredients);
+
+    MenuItemModel.findAll()
+    .then( item => {
+        ItemIngredientModel.findAll()
+        .then( ingredient => {
+            item[0].setIngredients([ingredient[0], ingredient[1]]);
+            item[1].setIngredients([ingredient[2], ingredient[3]])
+            item[2].setIngredients([ingredient[4], ingredient[5]])
+            item[3].setIngredients([ingredient[6], ingredient[7]])
+            item[4].setIngredients([ingredient[8], ingredient[9]])
+            item[5].setIngredients([ingredient[10], ingredient[11]])
+            item[6].setIngredients([ingredient[12], ingredient[13]])
+            item[7].setIngredients([ingredient[14], ingredient[15]])
+            item[9].setIngredients([ingredient[16], ingredient[17], ingredient[18], ingredient[19]])
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    })
+}
