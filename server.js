@@ -9,7 +9,7 @@ const indexRouter = require('./routes/indexRouter');
 const sequelize = new Sequelize(DBdevConfig.database, DBdevConfig.username, DBdevConfig.password, {
     host: DBdevConfig.host,
     dialect: DBdevConfig.dialect,
-    options: DBdevConfig.options,
+    //options: DBdevConfig.options,
     define: {
       timestamps: false
     }
@@ -25,7 +25,7 @@ sequelize
   });
 
 
-app.use('/', indexRouter); //Home page
+app.use('/api/restaurants', indexRouter); //Home page
 
  
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
