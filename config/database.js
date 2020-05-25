@@ -7,6 +7,12 @@ module.exports = {
     database: process.env.DB_DEV_USERNAME,
     host: process.env.DB_DEV_SERVER,
     dialect: "mssql",
+    options: {
+      dialectOptions: {
+        //enableArithAbort: true,
+        encrypt: true,
+        trustServerCertificate: true}
+    },
     seederStorage: "json",
     operatorsAliases: false
   },

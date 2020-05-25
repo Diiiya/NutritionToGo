@@ -9,6 +9,7 @@ const indexRouter = require('./routes/indexRouter');
 const sequelize = new Sequelize(DBdevConfig.database, DBdevConfig.username, DBdevConfig.password, {
     host: DBdevConfig.host,
     dialect: DBdevConfig.dialect,
+    options: DBdevConfig.options,
     define: {
       timestamps: false
     }
