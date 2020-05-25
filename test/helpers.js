@@ -1,4 +1,5 @@
-/**Helpers is there to avoid duplicate code and to ensure that our
+/**
+ * Helpers is there to avoid duplicate code and to ensure that our
  * test files are as clean as possible; only contains tests, not e.g.
  * preparings or settings 
  */
@@ -10,34 +11,15 @@
  const ItemIngredientModel = models.ItemIngredient;
  const testData = require('./testData').testData;
 
-/**Method cleanDB() will call db.model.truncate({cascade: true}).
- * 
- * TRUNCATE deletes all rows in a table without the table itself and 
- * without the 'where'-clause as in DELETE. 
- * 
- * When TRUNCATE is called in MSSQL it will also reset identity column
- * to defined seed or default: 1, which will ensure that where our tests
- * includes identity columns they will always pass.
- *  
- * 'cascade' option ensures all rows belonging to the particular row 
- * will be deleted along with it 
- * 
- * To be on the safe side, we clean a table one by one. If all of our
- * tables in DB has setting CASCADE on deletion, it would be possible
- * to only truncate the restaurant table since all other tables depends
- * on this one, parent of all parents.
- * We also truncates tables one by one to ensure all identity columns
- * in every table resets to defined seed or defeault: 1
-*/
 exports.cleanDB = async () => {
 
     const t = await models.sequelize.transaction();
 
     try{
-        await RestaurantModel.destroy( { where: {}, cascade: true, transaction: t } ).then( res => { console.log('Rest Destroyed')});
-        await MenuCategoryModel.destroy( { where: {}, cascade: true, transaction: t } ).then( res => { console.log('MeCa Destroyed')});
-        await MenuItemModel.destroy( { where: {}, cascade: true, transaction: t } ).then( res => { console.log('MeIt Destroyed')});
-        await ItemIngredientModel.destroy( { where: {}, cascade: true, transaction: t } ).then( res => { console.log('ItIn Destroyed')});
+        await RestaurantModel.destroy( { where: {}, cascade: true, transaction: t } );
+        await MenuCategoryModel.destroy( { where: {}, cascade: true, transaction: t } );
+        await MenuItemModel.destroy( { where: {}, cascade: true, transaction: t } );
+        await ItemIngredientModel.destroy( { where: {}, cascade: true, transaction: t } );
         await models.sequelize.query('DBCC CHECKIDENT ("dbo.Restaurants", RESEED, 0)', { raw: true, transaction: t } );
         await models.sequelize.query('DBCC CHECKIDENT ("dbo.MenuCategories", RESEED, 0)', { raw: true, transaction: t } );
         await models.sequelize.query('DBCC CHECKIDENT ("dbo.MenuItems", RESEED, 0)', { raw: true, transaction: t } );
@@ -89,3 +71,34 @@ exports.seedDB = async () => {
         })
     })*/
 }
+
+/**
+ * 22-05-2020:
+ * Method cleanDB() will call db.model.truncate({cascade: true}).
+ * 
+ * TRUNCATE deletes all rows in a table without the table itself and 
+ * without the 'where'-clause as in DELETE. 
+ * 
+ * When TRUNCATE is called in MSSQL it will also reset identity column
+ * to defined seed or default: 1, which will ensure that where our tests
+ * includes identity columns they will always pass.
+ *  
+ * 'cascade' option ensures all rows belonging to the particular row 
+ * will be deleted along with it 
+ * 
+ * To be on the safe side, we clean a table one by one. If all of our
+ * tables in DB has setting CASCADE on deletion, it would be possible
+ * to only truncate the restaurant table since all other tables depends
+ * on this one, parent of all parents.
+ * We also truncates tables one by one to ensure all identity columns
+ * in every table resets to defined seed or defeault: 1
+ * 
+ * 25-05-2020
+ * UPDATE: 
+ * trucate() does not yet work with if foreign key constraints
+ * are used with a sequelize/mssql mix. Workaround is using destroy(),
+ * then making raw sql queries to reset autoincrement in identity 
+ * columns. 
+ * In our case, we also used an 'unmanaged' transaction (manually commit
+ * and manually rollback) 
+*/
