@@ -6,7 +6,8 @@ exports.testData = {
             openAtHour: 1200,
             closedAtHour: 2000,
             deliveryPrice: 20.00,
-            deliveryMinimumOrderAmount: 100,
+            deliveryLowerBoundary: 100,
+            deliveryUpperBoundary: 250,
             deliveryTimeMinutes: 30,
             rating: 4.9,
             address: 'Jernbanegade 16',
@@ -18,8 +19,9 @@ exports.testData = {
             logoRelativePath: '/restaurantLogos/dhaba',
             openAtHour: 1200,
             closedAtHour: 2200,
-            deliveryPrice: 70.00,
-            deliveryMinimumOrderAmount: 150,
+            deliveryPrice: 10.00,
+            deliveryLowerBoundary: 0,
+            deliveryUpperBoundary: null,
             deliveryTimeMinutes: 30,
             rating: 4.2,
             address: 'Sct. Peders Kirkeplads 1',
@@ -31,8 +33,9 @@ exports.testData = {
             logoRelativePath: '/restaurantLogos/cafeelysia',
             openAtHour: 1600,
             closedAtHour: 2200,
-            deliveryPrice: 50.00,
-            deliveryMinimumOrderAmount: 200,
+            deliveryPrice: 0.00,
+            deliveryLowerBoundary: 50,
+            deliveryUpperBoundary: 150,
             deliveryTimeMinutes: 45,
             rating: 4.6,
             address: 'Jernbanegade 15',
@@ -59,6 +62,18 @@ exports.testData = {
         },
         {
             categoryName: 'Burger',
+            restaurantId: 3
+        },
+        {
+            categoryName: 'Drinks',
+            restaurantId: 1
+        },
+        {
+            categoryName: 'Drinks',
+            restaurantId: 2
+        },
+        {
+            categoryName: 'Drinks',
             restaurantId: 3
         }
     ],
@@ -112,6 +127,36 @@ exports.testData = {
             itemName: 'Classic',
             price: 70.00,
             categoryId: 5
+        },
+        {
+            itemName:'Water 0,5 liter',
+            price: 10.00,
+            categoryId: 6
+        },
+        {
+            itemName:'Water 0,5 liter',
+            price: 10.00,
+            categoryId: 7
+        },
+        {
+            itemName:'Water 0,5 liter',
+            price: 10.00,
+            categoryId: 8
+        },
+        {
+            itemName:'Coca Cola 0,5 liter',
+            price: 20.00,
+            categoryId: 6
+        },
+        {
+            itemName:'Coca Cola 0,5 liter',
+            price: 20.00,
+            categoryId: 7
+        },
+        {
+            itemName:'Coca Cola 0,5 liter',
+            price: 20.00,
+            categoryId: 8
         }
     ],
     itemIngredients: [

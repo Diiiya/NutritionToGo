@@ -5,7 +5,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(255),
       allowNull: false
     }
-  }, {});
+  }, {
+    timestamps: false
+  });
   ItemIngredient.associate = function(models) {
     ItemIngredient.belongsToMany(models.MenuItem, {
       through: 'ItemsIngredients',

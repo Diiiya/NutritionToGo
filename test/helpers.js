@@ -29,13 +29,23 @@
  * We also truncates tables one by one to ensure all identity columns
  * in every table resets to defined seed or defeault: 1
 */
-exports.cleanDB = async (db) => {
-    await db.ItemIngredient.truncate({cascade: true}) //n:m relation has default onDelete: cascade, but cascade must be defined when using truncate() to avoid "depenent on"-errors
-    await db.MenuItem.truncate({cascade: true}) //possibly redundant
-    await db.MenuCategory.truncate({cascade: true}) //1:m relation with MenuItem, therefore every MenuItem will be deleted
-    await db.OrderItem.truncate({cascade: true}) //possibly redundant
-    await db.Order.truncate({cascade: true}) //1:m relation with OrderItem, therefore every OrderItem will be deleted
-    await db.Restaurant.truncate({cascade: true}) //1:m relation with MenuCategory and Order
+exports.cleanDB = async () => {
+
+    const t = await models.sequelize.transaction();
+
+    try{
+        await RestaurantModel.destroy( { where: {}, cascade: true, transaction: t } ).then( res => { console.log('Rest Destroyed')});
+        await MenuCategoryModel.destroy( { where: {}, cascade: true, transaction: t } ).then( res => { console.log('MeCa Destroyed')});
+        await MenuItemModel.destroy( { where: {}, cascade: true, transaction: t } ).then( res => { console.log('MeIt Destroyed')});
+        await ItemIngredientModel.destroy( { where: {}, cascade: true, transaction: t } ).then( res => { console.log('ItIn Destroyed')});
+        await models.sequelize.query('DBCC CHECKIDENT ("dbo.Restaurants", RESEED, 0)', { raw: true, transaction: t } );
+        await models.sequelize.query('DBCC CHECKIDENT ("dbo.MenuCategories", RESEED, 0)', { raw: true, transaction: t } );
+        await models.sequelize.query('DBCC CHECKIDENT ("dbo.MenuItems", RESEED, 0)', { raw: true, transaction: t } );
+        await models.sequelize.query('DBCC CHECKIDENT ("dbo.ItemIngredients", RESEED, 0)', { raw: true, transaction: t } );
+        await t.commit();
+    } catch (error) {
+        await t.rollback();
+    }
 }
 
 /**Method seedDB will fill db with data on our tables that users can
@@ -48,22 +58,34 @@ exports.seedDB = async () => {
     await MenuItemModel.bulkCreate(testData.menuItems);
     await ItemIngredientModel.bulkCreate(testData.itemIngredients);
 
-    MenuItemModel.findAll()
+    /*MenuItemModel.findAll()
     .then( item => {
         ItemIngredientModel.findAll()
         .then( ingredient => {
-            item[0].setIngredients([ingredient[0], ingredient[1]]);
-            item[1].setIngredients([ingredient[2], ingredient[3]])
-            item[2].setIngredients([ingredient[4], ingredient[5]])
-            item[3].setIngredients([ingredient[6], ingredient[7]])
-            item[4].setIngredients([ingredient[8], ingredient[9]])
-            item[5].setIngredients([ingredient[10], ingredient[11]])
-            item[6].setIngredients([ingredient[12], ingredient[13]])
-            item[7].setIngredients([ingredient[14], ingredient[15]])
-            item[9].setIngredients([ingredient[16], ingredient[17], ingredient[18], ingredient[19]])
+
+            item[0].setIngredients(ingredient[0])
+            item[0].setIngredients(ingredient[1])
+            item[1].setIngredients(ingredient[2])
+            item[1].setIngredients(ingredient[3])
+            item[2].setIngredients(ingredient[4])
+            item[2].setIngredients(ingredient[5])
+            item[3].setIngredients(ingredient[6])
+            item[3].setIngredients(ingredient[7])
+            item[4].setIngredients(ingredient[8])
+            item[4].setIngredients(ingredient[9])
+            item[5].setIngredients(ingredient[10])
+            item[5].setIngredients(ingredient[11])
+            item[6].setIngredients(ingredient[12])
+            item[6].setIngredients(ingredient[13])
+            item[7].setIngredients(ingredient[14])
+            item[7].setIngredients(ingredient[15])
+            item[9].setIngredients(ingredient[16])
+            item[9].setIngredients(ingredient[17])
+            item[9].setIngredients(ingredient[18])
+            item[9].setIngredients(ingredient[19]) 
         })
         .catch(err => {
             console.log(err)
         })
-    })
+    })*/
 }

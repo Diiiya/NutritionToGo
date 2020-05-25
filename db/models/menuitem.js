@@ -13,7 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     }
-  }, {});
+  }, {
+    timestamps: false
+  });
   MenuItem.associate = function(models) {
     MenuItem.belongsTo(models.MenuCategory, {foreignKey: 'categoryId'})
     MenuItem.belongsToMany(models.ItemIngredient, {

@@ -37,7 +37,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     }
-  }, {});
+  }, {
+    timestamps: false
+  });
   Order.associate = function(models) {
     Order.belongsTo(models.Restaurant, {foreignKey: 'restaurantId'})
     Order.hasMany(models.OrderItem, {onDelete: 'cascade', foreignKey: 'orderId'})
