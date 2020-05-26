@@ -11,8 +11,8 @@ const assert = chai.assert;
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
-const Restaurant = require('../../dal/restaurantDAO');
-const helpers = require('../helpers');
+const Restaurant = require('../dal/restaurantDAO');
+const helpers = require('./helpers');
 
 const cleanDB = helpers.cleanDB;
 const seedDB = helpers.seedDB; 
@@ -39,5 +39,13 @@ describe('RestaurantDAO', async function() {
     it('getAll() has length of 3', async () => {
         //console.log(restaurants) //for debugging. If array of restaurants is not showing in console, then something is terribly wrong
         assert.lengthOf(restaurants, 3, 'has lenght of 3');
+    })
+
+    it('restaurant at index 0 is named "Macro"', () => {
+
+        let actual = restaurants[0].name;
+        let expected = 'Macro';
+
+        assert.equal(actual, expected);
     })
 })

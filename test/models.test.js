@@ -10,12 +10,12 @@ const {
     checkPropertyExists
 } = require('sequelize-test-helpers');
 //import models
-const RestaurantModel = require('../../db/models/restaurant');
-const MenuCategoryModel = require('../../db/models/menucategory');
-const MenuItemModel = require('../../db/models/menuitem');
-const ItemIngredientModel = require('../../db/models/itemingredient');
-const OrderModel = require('../../db/models/order');
-const OrderItemModel = require('../../db/models/orderitem');
+const RestaurantModel = require('../db/models/restaurant');
+const MenuCategoryModel = require('../db/models/menucategory');
+const MenuItemModel = require('../db/models/menuitem');
+const ItemIngredientModel = require('../db/models/itemingredient');
+const OrderModel = require('../db/models/order');
+const OrderItemModel = require('../db/models/orderitem');
 
 
 describe('Model testing', () =>{
