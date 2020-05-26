@@ -52,9 +52,11 @@ const customInputStyle = {
     }
   },
   labelRootError: {
+    borderColor: "transparent !important", //added
     color: dangerColor + " !important"
   },
   labelRootSuccess: {
+    borderColor: "transparent !important", //added
     color: successColor + " !important"
   },
   formControl: {
