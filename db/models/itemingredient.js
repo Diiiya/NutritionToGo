@@ -10,9 +10,8 @@ module.exports = (sequelize, DataTypes) => {
   });
   ItemIngredient.associate = function(models) {
     ItemIngredient.belongsToMany(models.MenuItem, {
-      through: 'ItemsIngredients',
-      foreignKey: 'ItemsIngredientsid',
-      as: 'item'
+      through: 'MenuItems_ItemsIngredients',
+      foreignKey: 'ItemsIngredientsid'
     })
   };
   return ItemIngredient;

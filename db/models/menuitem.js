@@ -19,9 +19,8 @@ module.exports = (sequelize, DataTypes) => {
   MenuItem.associate = function(models) {
     MenuItem.belongsTo(models.MenuCategory, {foreignKey: 'categoryId'})
     MenuItem.belongsToMany(models.ItemIngredient, {
-      through: 'ItemsIngredients',
-      foreignKey: 'MenuItemsid',
-      as: 'ingredient'
+      through: 'MenuItems_ItemsIngredients',
+      foreignKey: 'MenuItemsid'
     })
   };
   return MenuItem;

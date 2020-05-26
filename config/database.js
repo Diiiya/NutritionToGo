@@ -8,6 +8,9 @@ module.exports = {
     host: process.env.DB_DEV_SERVER,
     dialect: "mssql",
     logging: false,
+    define:{
+      timestamps: false
+    },
     dialectOptions:{
       server: process.env.DB_DEV_SERVER,
       authentication:{

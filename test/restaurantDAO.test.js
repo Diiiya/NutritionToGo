@@ -20,7 +20,8 @@ const seedDB = helpers.seedDB;
 before( async function() {
     this.timeout(15000);
     await cleanDB();
-    await seedDB().catch( error => {done(error) });
+    await seedDB().catch( error => {throw error });
+    
 })
 
 /*

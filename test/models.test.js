@@ -161,9 +161,8 @@ describe('Model testing', () =>{
 
                 it('belongsToMany ItemIngredient', () => {
                     expect(Model.belongsToMany).to.have.been.calledWith(ItemIngredient, {
-                        as: 'ingredient',
                         foreignKey: 'MenuItemsid',
-                        through: 'ItemsIngredients'    
+                        through: 'MenuItems_ItemsIngredients'    
                       })
                 })
             })
@@ -197,9 +196,8 @@ describe('Model testing', () =>{
 
                 it('belongsToMany MenuItem', () => {
                     expect(Model.belongsToMany).to.have.been.calledWith(MenuItem, {
-                        as: 'item',
                         foreignKey: 'ItemsIngredientsid',
-                        through: 'ItemsIngredients'    
+                        through: 'MenuItems_ItemsIngredients'    
                       })
                 })
             })

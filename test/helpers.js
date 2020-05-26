@@ -37,39 +37,18 @@ exports.cleanDB = async () => {
 exports.seedDB = async () => {
     await RestaurantModel.bulkCreate(testData.restaurants);
     await MenuCategoryModel.bulkCreate(testData.menuCategories);
-    await MenuItemModel.bulkCreate(testData.menuItems);
     await ItemIngredientModel.bulkCreate(testData.itemIngredients);
+    var itemArray = await MenuItemModel.bulkCreate(testData.menuItems);
 
-    /*MenuItemModel.findAll()
-    .then( item => {
-        ItemIngredientModel.findAll()
-        .then( ingredient => {
-
-            item[0].setIngredients(ingredient[0])
-            item[0].setIngredients(ingredient[1])
-            item[1].setIngredients(ingredient[2])
-            item[1].setIngredients(ingredient[3])
-            item[2].setIngredients(ingredient[4])
-            item[2].setIngredients(ingredient[5])
-            item[3].setIngredients(ingredient[6])
-            item[3].setIngredients(ingredient[7])
-            item[4].setIngredients(ingredient[8])
-            item[4].setIngredients(ingredient[9])
-            item[5].setIngredients(ingredient[10])
-            item[5].setIngredients(ingredient[11])
-            item[6].setIngredients(ingredient[12])
-            item[6].setIngredients(ingredient[13])
-            item[7].setIngredients(ingredient[14])
-            item[7].setIngredients(ingredient[15])
-            item[9].setIngredients(ingredient[16])
-            item[9].setIngredients(ingredient[17])
-            item[9].setIngredients(ingredient[18])
-            item[9].setIngredients(ingredient[19]) 
-        })
-        .catch(err => {
-            console.log(err)
-        })
-    })*/
+    await itemArray[0].setItemIngredients([1, 2]);
+    await itemArray[1].setItemIngredients([3, 4]);
+    await itemArray[2].setItemIngredients([5 ,6]);
+    await itemArray[3].setItemIngredients([7, 8]);
+    await itemArray[4].setItemIngredients([9, 10]);
+    await itemArray[5].setItemIngredients([11, 12]);
+    await itemArray[6].setItemIngredients([13, 14]);
+    await itemArray[7].setItemIngredients([15, 16]);
+    await itemArray[9].setItemIngredients([17, 18, 19, 20]);
 }
 
 /**
@@ -101,4 +80,7 @@ exports.seedDB = async () => {
  * columns. 
  * In our case, we also used an 'unmanaged' transaction (manually commit
  * and manually rollback) 
+ * 
+ * 26-05-2020
+ * Don't ever mix Promises with async/await
 */

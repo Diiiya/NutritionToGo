@@ -7,3 +7,10 @@ exports.index = async (req, res) => {
 
     res.status(200).send(result);
 }
+
+exports.getByid = async (req, res) => {
+
+    let result = await restaurant.getById(req.params.id);
+
+    res.status(200).send(result);
+}
