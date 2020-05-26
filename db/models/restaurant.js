@@ -20,9 +20,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(5, 2),
       allowNull: false
     },
-    deliveryMinimumOrderAmount: {
+    deliveryLowerBoundary: {
       type: DataTypes.INTEGER,
       allowNull: false
+    },
+    deliveryUpperBoundary: {
+      type: DataTypes.INTEGER,
     },
     deliveryTimeMinutes: {
       type: DataTypes.INTEGER,
@@ -43,7 +46,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(60),
       allowNull: false
     }
-  }, {});
+  }, {
+    timestamps: false
+  });
   Restaurant.associate = function(models) {
     Restaurant.hasMany(models.MenuCategory, {onDelete: 'cascade', foreignKey: 'restaurantId'})
     Restaurant.hasMany(models.Order, {onDelete: 'cascade', foreignKey: 'restaurantId'})

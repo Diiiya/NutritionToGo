@@ -17,7 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     }
-  }, {});
+  }, {
+    timestamps: false
+  });
   OrderItem.associate = function(models) {
     OrderItem.belongsTo(models.Order, {foreignKey: 'orderId'})
   };

@@ -1,19 +1,16 @@
-const restaurantDAO = require('../dal/restaurantDAO');
+const Restaurant = require('../dal/restaurantDAO')
+const restaurant = new Restaurant();
 
-exports.index = (req, res) => {
-    let restaurantObj = {
-        name: 'Macro',
-        logoRelativePath: '/rLogo/macro',
-        openAtHour: 1200,
-        closedAtHour: 2100,
-        deliveryPrice: 20.00,
-        deliveryMinimumOrderAmount: 100,
-        deliveryTimeMinutes: 45,
-        rating: 4.8,
-        address: 'Jernbanegade 1',
-        postalCode: 4700,
-        city: 'Næstved'
-    }
+exports.index = async (req, res) => {
 
-    res.status(200).send('Hello World!')
+    let result = await restaurant.getAll();
+
+    res.status(200).send(result);
+}
+
+exports.getByid = async (req, res) => {
+
+    let result = await restaurant.getById(req.params.id);
+
+    res.status(200).send(result);
 }
