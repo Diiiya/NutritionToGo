@@ -11,9 +11,20 @@ const sequelize = new Sequelize(DBdevConfig.database, DBdevConfig.username, DBde
     host: DBdevConfig.host,
     dialect: DBdevConfig.dialect,
     logging: DBdevConfig.logging,
-    options: DBdevConfig.options,
-    define: {
-      timestamps: false
+    dialectOptions:{
+      server: process.env.DB_DEV_SERVER,
+      authentication:{
+        options:{
+          type: 'default',
+          userName: process.env.DB_DEV_USERNAME,
+          password: process.env.DB_DEV_PASSWORD
+        }
+      },
+      options:{
+        database: process.env.DB_DEV_USERNAME,
+        enableArithAbort: true,
+        trustServerCertificate: true
+      }
     }
   });
  

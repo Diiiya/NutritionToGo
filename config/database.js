@@ -8,17 +8,21 @@ module.exports = {
     host: process.env.DB_DEV_SERVER,
     dialect: "mssql",
     logging: false,
-    options: {
-      dialectOptions: {
-        //enableArithAbort: true,
+    dialectOptions:{
+      server: process.env.DB_DEV_SERVER,
+      authentication:{
         options:{
-          trustServerCertificate: true
-        },
-        encrypt: true,
-        trustServerCertificate: true}
-    },
-    seederStorage: "json",
-    operatorsAliases: false
+          type: 'default',
+          userName: process.env.DB_DEV_USERNAME,
+          password: process.env.DB_DEV_PASSWORD
+        }
+      },
+      options:{
+        database: process.env.DB_DEV_USERNAME,
+        enableArithAbort: true,
+        trustServerCertificate: true
+      }
+    }
   },
   test: {
     username: "root",

@@ -6,10 +6,11 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp); 
 
 //Declare and initalize variable containing our test server. Default behavior: closes server after every request. keepOpen() ensures the server to keep listening until it is manually closed.
-var requester = chai.request(app).keepOpen();
 
-describe('', function() {
+
+describe('Some name', function() {
     context('Route GET \'/api/restaurants\'', async function() {
+        var requester = chai.request(app);
         let res = await requester.get('/api/restaurants')
     
         it('status 200', () => {
@@ -21,7 +22,6 @@ describe('', function() {
 
         
         })
-        await requester.close();
     })
 })
 
