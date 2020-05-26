@@ -12,16 +12,16 @@ const sequelize = new Sequelize(DBdevConfig.database, DBdevConfig.username, DBde
     dialect: DBdevConfig.dialect,
     logging: DBdevConfig.logging,
     dialectOptions:{
-      server: process.env.DB_DEV_SERVER,
+      server: DBdevConfig.host,
       authentication:{
         options:{
           type: 'default',
-          userName: process.env.DB_DEV_USERNAME,
-          password: process.env.DB_DEV_PASSWORD
+          userName: DBdevConfig.username,
+          password: DBdevConfig.password
         }
       },
       options:{
-        database: process.env.DB_DEV_USERNAME,
+        database: DBdevConfig.username,
         enableArithAbort: true,
         trustServerCertificate: true
       }
@@ -31,7 +31,7 @@ const sequelize = new Sequelize(DBdevConfig.database, DBdevConfig.username, DBde
 sequelize
   .authenticate()
   .then(() => {
-    //console.log('Connection has been established successfully.');
+    console.log('Connection has been established successfully.');
   })
   .catch(err => {
     console.error('Unable to connect to the database:', err);
