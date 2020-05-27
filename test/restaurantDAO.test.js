@@ -83,7 +83,7 @@ describe('RestaurantDAO', async function () {
 
             let createdOrder = await restaurant.addOrder(orderExample, 1)
             .then( )
-            console.log(createdOrder);
+            //console.log(createdOrder);
             let actual = 'Boaty';
             let expected = createdOrder.cusFirstName;
 

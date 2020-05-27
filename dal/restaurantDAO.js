@@ -26,16 +26,15 @@ module.exports = class Restaurant{
                         model: models.ItemIngredient
                     }]
                 }]
-            }]})
+            }]
+        })
         .catch( err => {
             if (err) 
-            throw new Error('Invalid id or restaurant not in DB');
             console.log(err)
         });
     }
 
     addOrder(object, id) { 
-        
         let order = {
             cusFirstName: object.cusFirstName,
             cusSurname: object.cusSurname,
@@ -48,7 +47,6 @@ module.exports = class Restaurant{
             restaurantId: id,
             OrderItems: object.orderItems
         }
-
         return OrderModel.create(order, {include: [models.OrderItem]})
         .catch( err => {
             console.log(err);
@@ -66,13 +64,9 @@ module.exports = class Restaurant{
     }
 
     getAllCategories(id) {
-
         return MenuCategoryModel.findAll({where: {restaurantId: id}})
         .catch( err => {
             console.log(err)
         })
     }
-
-    
-
 } 
