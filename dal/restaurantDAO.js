@@ -28,13 +28,14 @@ module.exports = class Restaurant{
                 }]
             }]})
         .catch( err => {
-            if (err)
+            if (err) 
+            throw new Error('Invalid id or restaurant not in DB');
             console.log(err)
         });
     }
 
-    async addOrder(object, id) { 
-
+    addOrder(object, id) { 
+        
         let order = {
             cusFirstName: object.cusFirstName,
             cusSurname: object.cusSurname,
@@ -44,40 +45,14 @@ module.exports = class Restaurant{
             phoneNumber: object.phoneNumber,
             delivery: object.delivery,
             totalPrice: object.totalPrice,
-            restaurantId: id
+            restaurantId: id,
+            OrderItems: object.orderItems
         }
 
-        /*return OrderModel.create(order)
-        .then( createdOrder => {
-            object.orderItems.forEach( item => {
-                createdOrder.createOrderItem(item) //https://sequelize.org/master/class/lib/associations/has-many.js~HasMany.html               
-            });
-            //OrderItemModel.bulkCreate(object.orderItems).then( result => )
-
-        })
+        return OrderModel.create(order, {include: [models.OrderItem]})
         .catch( err => {
-            console.log(err)
-        })*/
-
-        let orderFinal = await OrderModel.create(order);
-
-        let items = [];
-        
-        await object.orderItems.forEach( item => {
-            items.push(orderFinal.createOrderItem(item))   //https://sequelize.org/master/class/lib/associations/has-many.js~HasMany.html   
-            
-        });
-
-        let result = await this.wrapVariables(orderFinal, items)
-
-        return result;
-    }
-
-    async wrapVariables(a, b)  {
-        return {
-            Order: a,
-            Items: b
-        }
+            console.log(err);
+        })
     }
 
     getOrders(id) {
