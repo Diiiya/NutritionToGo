@@ -3,23 +3,28 @@ const restaurant = new Restaurant();
 
 exports.index = async (req, res) => {
 
-    let result = await restaurant.getAll();
+    let result = restaurant.getAll();
 
-    res.status(200).send(result);
+    await res.status(200).send(result);
 }
 
 exports.getByid = async (req, res) => {
 
-    let result = await restaurant.getById(req.params.id);
+    let result = restaurant.getById(req.params.id);
 
-    res.status(200).send(result);
+    await res.status(200).send(result);
 }
 
-exports.order = async (req, res) => {
+exports.createOrder = async (req, res) => {
 
     let order = req.body;
 
-    let result = await restaurant.addOrder(order)
+    let result = restaurant.addOrder(order)
 
-    res.status(201).send({msg: 'success', created: result})
+    await res.status(201).send({msg: 'success', created: result})
+}
+
+exports.getOrder = async (req, res) => {
+    
+    res.status(200).send({msg: 'ok'});
 }
