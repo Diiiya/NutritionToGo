@@ -20,7 +20,16 @@ const useStyles = makeStyles(styles);
 function getDeliveryTime(deliveryTimeMinutes){
     var nowTime = new Date();
     var myTime = new Date(nowTime.getTime() + deliveryTimeMinutes*60000);
-    localStorage.setItem("deliveryTimeMinutes", myTime.getHours() + ":" + myTime.getMinutes());
+    var hours = myTime.getHours();
+    var minutesToCheck = myTime.getMinutes();
+    var minutes;
+    if(minutesToCheck < 10){
+        minutes = "0" + minutesToCheck;
+    }
+    else{
+        minutes = minutesToCheck;
+    }
+    localStorage.setItem("deliveryTimeMinutes", hours + ":" + minutes);
 }
 
 export default function DeliveryDetailsPage() {

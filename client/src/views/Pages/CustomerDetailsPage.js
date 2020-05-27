@@ -164,7 +164,7 @@ function checkInput(errorClass, successClass) {
                                                                     
                                                                     myPostMethod(myFirstName.value, myLastName.value, myAddress.value, myPostalCode.value, myCity.value, myPhoneNumber.value)
 
-                                                                    //window.location.href = "/delivery-details-page";
+                                                                    window.location.href = "/delivery-details-page";
                                                                 }
                                                                 else {
                                                                     myPhoneNumber.className = errorClass;
@@ -229,29 +229,34 @@ function checkInput(errorClass, successClass) {
 
 function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, cityPost, phoneNumberPost){
 
-    axios.post(`http://localhost:3000/api/restaurants/${localStorage.getItem("restaurantId")}/order`, JSON.stringify({
+    var radioDelivery = document.getElementById("radioDelivery").checked;
+    var deliveryType = 0;
+    if (radioDelivery === true){
+        deliveryType = 1;
+    }
+
+    axios.post(`http://localhost:3000/api/restaurants/${localStorage.getItem("restaurantId")}/order`, {
         cusFirstName: firstNamePost,
         cusSurname: lastNamePost,
         address: addressPost,
         postalCode: postalCodePost,
         city: cityPost,
         phoneNumber: phoneNumberPost,
-        delivery: false,
+        delivery: deliveryType,
         totalPrice: 120,
-        restaurantId: localStorage.getItem("restaurantId"),
-        OrderItems: [
+        orderItems: [
             {
                 itemName: "Salad 1",
-                quanity: 2,
+                quantity: 2,
                 price: 20.00
             },
             {
                 itemName: "Salad 2",
-                quanity: 1,
+                quantity: 1,
                 price: 40.00
             }
         ]
-    }))
+    })
       .then((response) => {
         console.log(response);
       }, (error) => {
@@ -291,7 +296,7 @@ export default function CustomerDetailsPage() {
                 <GridContainer style={{ backgroundColor: "white" }}>
                     <GridItem xs={12} sm={12} md={3} style={{ paddingLeft: "0" }}>
                         <img
-                            src={data.logoRelativePath}
+                            src={restaurantImage}//{data.logoRelativePath} //no logo yet?
                             alt="..."
                             height="230"
                             width="100%"
@@ -309,9 +314,9 @@ export default function CustomerDetailsPage() {
                             <h3 style={{ alignText: "center" }}><strong>YOUR BASKET:</strong></h3>
                             <div>
                                 <div>
-                                    <h4 style={{ display: "inline-block" }}>Caesar salad</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
-                                    <h4 style={{ display: "inline-block" }}>150 DKK</h4>
+                                    <h4 id="itemName" style={{ display: "inline-block" }}>Caesar salad</h4>
+                                    <h4 id="itemQuantity" style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
+                                    <h4 id="item Price" style={{ display: "inline-block" }}>150 DKK</h4>
                                 </div>
                                 <hr></hr>
                                 <div>
@@ -325,7 +330,7 @@ export default function CustomerDetailsPage() {
                             <div style={{ marginTop: "30px" }}>
                                 <FormControlLabel
                                     control={
-                                        <Radio
+                                        <Radio id="radioPickUp"
                                             checked={selectedEnabled === "a"}
                                             onChange={() => setSelectedEnabled("a")}
                                             value="a"
@@ -351,7 +356,7 @@ export default function CustomerDetailsPage() {
                                 />
                                 <FormControlLabel
                                     control={
-                                        <Radio
+                                        <Radio id="radioDelivery"
                                             checked={selectedEnabled === "b"}
                                             onChange={() => setSelectedEnabled("b")}
                                             value="b"
@@ -377,7 +382,7 @@ export default function CustomerDetailsPage() {
                                 />
                             </div>
 
-                            <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong>TOTAL PRICE: 300 DKK</strong></h4>
+                            <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong id="totalPriceItem">TOTAL PRICE: 300 DKK</strong></h4>
                         </div>
                     </GridItem>
                     <GridItem xs={12} sm={12} md={7} style={{ marginTop: "60px", backgroundColor: "white", height: "500px" }}>
