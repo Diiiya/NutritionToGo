@@ -262,12 +262,10 @@ export default function CustomerDetailsPage() {
                             width="100%"
                         />
                     </GridItem>
-                    {data.restaurant.map(item => (
                         <GridItem xs={12} sm={12} md={3}>
-                            <h3><strong>{item.name}</strong></h3>
-                            <h5>{item.address}</h5>
+                            <h3><strong>{data.name}</strong></h3>
+                            <h5>{data.address}</h5>
                         </GridItem>
-                    ))}
                 </GridContainer>
 
                 <GridContainer style={{ marginTop: "60px" }}>
