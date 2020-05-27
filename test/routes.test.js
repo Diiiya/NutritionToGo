@@ -29,7 +29,7 @@ describe('Route GET \'/:id\'', () => {
     var actual = 1+2;
     var expected = 3;
     
-    it('A restaurant an its menu', () => {
+    it('A restaurant and its menu', () => {
         assert.equal(actual, expected);
     })
     

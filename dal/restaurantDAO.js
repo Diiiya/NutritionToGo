@@ -32,7 +32,7 @@ module.exports = class Restaurant{
         });
     }
 
-    addOrder(object) { 
+    async addOrder(object, id) { 
 
         let order = {
             cusFirstName: object.cusFirstName,
@@ -43,46 +43,46 @@ module.exports = class Restaurant{
             phoneNumber: object.phoneNumber,
             delivery: object.delivery,
             totalPrice: object.totalPrice,
-            restaurantId: object.restaurantId
+            restaurantId: id
         }
 
-        return OrderModel.create(order)
+        /*return OrderModel.create(order)
         .then( createdOrder => {
-            object.OrderItems.forEach( item => {
+            object.orderItems.forEach( item => {
                 createdOrder.createOrderItem(item) //https://sequelize.org/master/class/lib/associations/has-many.js~HasMany.html               
             });
+            //OrderItemModel.bulkCreate(object.orderItems).then( result => )
+
         })
         .catch( err => {
             console.log(err)
-        })
+        })*/
+
+        let orderFinal = await OrderModel.create(order);
+
+        let items = [];
+        
+        await object.orderItems.forEach( item => {
+            items.push(orderFinal.createOrderItem(item))   //https://sequelize.org/master/class/lib/associations/has-many.js~HasMany.html   
+            
+        });
+
+        let result = await this.wrapVariables(orderFinal, items)
+
+        return result;
     }
-}
 
-
-
-
-var orderExample = 
-
-{
-    cusFirstName: 'Boaty',
-    cusSurname: 'McBoatface',
-    address: 'Some Street 123',
-    postalCode: 6500,
-    city: 'Tortuga',
-    phoneNumber: 98765432,
-    delivery: false,
-    totalPrice: 210.00,
-    restaurantId: 1,
-    OrderItems: [
-        {
-            itemName: 'Eatable item 1',
-            quantity: 2,
-            price: 20.00
-        },
-        {
-            itemName: 'Expensive eatable item 2',
-            quantity: 1,
-            price: 170.00
+    async wrapVariables(a, b)  {
+        return {
+            Order: a,
+            Items: b
         }
-    ]
+    }
+
+    findOrder(id) {
+        
+    }
+
+    
+
 } 

@@ -9,6 +9,8 @@
  const MenuCategoryModel = models.MenuCategory;
  const MenuItemModel = models.MenuItem;
  const ItemIngredientModel = models.ItemIngredient;
+ const OrderModel = models.Order;
+ const OrderItemModel = models.OrderItem;
  const testData = require('./testData').testData;
 
 exports.cleanDB = async () => {
@@ -20,10 +22,14 @@ exports.cleanDB = async () => {
         await MenuCategoryModel.destroy( { where: {}, cascade: true, transaction: t } );
         await MenuItemModel.destroy( { where: {}, cascade: true, transaction: t } );
         await ItemIngredientModel.destroy( { where: {}, cascade: true, transaction: t } );
+        await OrderModel.destroy( { where: {}, cascade: true, transaction: t } );
+        await OrderItemModel.destroy( { where: {}, cascade: true, transaction: t } );
         await models.sequelize.query('DBCC CHECKIDENT ("dbo.Restaurants", RESEED, 0)', { raw: true, transaction: t } );
         await models.sequelize.query('DBCC CHECKIDENT ("dbo.MenuCategories", RESEED, 0)', { raw: true, transaction: t } );
         await models.sequelize.query('DBCC CHECKIDENT ("dbo.MenuItems", RESEED, 0)', { raw: true, transaction: t } );
         await models.sequelize.query('DBCC CHECKIDENT ("dbo.ItemIngredients", RESEED, 0)', { raw: true, transaction: t } );
+        await models.sequelize.query('DBCC CHECKIDENT ("dbo.Orders", RESEED, 0)', { raw: true, transaction: t } );
+        await models.sequelize.query('DBCC CHECKIDENT ("dbo.OrderItems", RESEED, 0)', { raw: true, transaction: t } );
         await t.commit();
     } catch (error) {
         await t.rollback();

@@ -3,23 +3,41 @@ const restaurant = new Restaurant();
 
 exports.index = async (req, res) => {
 
-    let result = await restaurant.getAll();
+    let result = restaurant.getAll();
 
-    res.status(200).send(result);
+    await res.status(200).send(result);
 }
 
 exports.getByid = async (req, res) => {
 
-    let result = await restaurant.getById(req.params.id);
+    let result = restaurant.getById(req.params.id);
 
-    res.status(200).send(result);
+    await res.status(200).send(result);
 }
 
-exports.order = async (req, res) => {
+exports.createOrder = async (req, res, next) => {
 
     let order = req.body;
+    let restId = req.params.id;
 
-    let result = await restaurant.addOrder(order)
+    try{
 
-    res.status(201).send({msg: 'success', created: result})
+        let result = restaurant.addOrder(order, restId);
+        await res.status(201).send({status: 'Success', message: 'Successfully created an order'})
+
+    } catch(err){
+
+        res.status(500).send({status: 'Failed', message: 'Something went wrong. Check for null values in req. body'})
+        next(err)
+    }
+}
+
+exports.getOrder = async (req, res) => {
+
+    let restId = req.params.id;
+    let orderObj = req.body
+
+
+    
+    res.status(200).send({msg: 'ok'});
 }
