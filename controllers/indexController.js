@@ -14,3 +14,12 @@ exports.getByid = async (req, res) => {
 
     res.status(200).send(result);
 }
+
+exports.order = async (req, res) => {
+
+    let order = req.body;
+
+    let result = await restaurant.addOrder(order)
+
+    res.status(201).send({msg: 'success', created: result})
+}
