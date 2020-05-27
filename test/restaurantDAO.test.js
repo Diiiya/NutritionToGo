@@ -86,7 +86,7 @@ describe('RestaurantDAO', async function () {
 
             console.log(createdOrder);
             let actual = 'Boaty';
-            let expected = createdOrder.cusFirstName;
+            let expected = createdOrder.Order.cusFirstName;
 
             await assert.equal(actual, expected);
         })

@@ -46,7 +46,7 @@ module.exports = class Restaurant{
             restaurantId: object.restaurantId
         }
 
-        return OrderModel.create(order)
+        /*return OrderModel.create(order)
         .then( createdOrder => {
             object.orderItems.forEach( item => {
                 createdOrder.createOrderItem(item) //https://sequelize.org/master/class/lib/associations/has-many.js~HasMany.html               
@@ -56,9 +56,9 @@ module.exports = class Restaurant{
         })
         .catch( err => {
             console.log(err)
-        })
-/*
-        let orderFinal = OrderModel.create(order);
+        })*/
+
+        let orderFinal = await OrderModel.create(order);
 
         let items = [];
         
@@ -67,15 +67,22 @@ module.exports = class Restaurant{
             
         });
 
-        let result = {
-            Order: orderFinal,
-            Items: items
-        }
+        let result = await this.wrapVariables(orderFinal, items)
 
-        return result;*/
+        return result;
+    }
+
+    async wrapVariables(a, b)  {
+        return {
+            Order: a,
+            Items: b
+        }
     }
 
     findOrder(id) {
         
     }
+
+    
+
 } 
