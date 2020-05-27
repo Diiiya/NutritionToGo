@@ -10,9 +10,9 @@ exports.index = async (req, res) => {
 
 exports.getByid = async (req, res) => {
 
-    let result = restaurant.getById(req.params.id);
+    let result = await restaurant.getById(req.params.id);
 
-    await res.status(200).send(result);
+    res.status(200).send(result);
 }
 
 exports.createOrder = async (req, res, next) => {
