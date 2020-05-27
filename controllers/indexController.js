@@ -1,18 +1,30 @@
 const Restaurant = require('../dal/restaurantDAO')
 const restaurant = new Restaurant();
 
-exports.index = async (req, res) => {
+exports.index = (req, res, next) => {
 
-    let result = await restaurant.getAll();
-
-    res.status(200).send(result);
+    restaurant.getAll()
+    .then( restaurants => {
+        res.status(200).send(restaurants)
+    })
+    .catch( err => {
+        res.status(500).send(err);
+        next(err);
+    })
 }
 
-exports.getByid = async (req, res) => {
+exports.getByid = (req, res) => {
 
-    let result = await restaurant.getById(req.params.id);
+    let restId = req.params.id;
 
-    res.status(200).send(result);
+    restaurant.getById(restId)
+    .then( restaurant => {
+        res.status(200).send(restaurant)
+    })
+    .catch( err => {
+        res.status(500).send(err);
+        next(err);
+    })
 }
 
 exports.createOrder = async (req, res, next) => {
@@ -32,12 +44,30 @@ exports.createOrder = async (req, res, next) => {
     }
 }
 
-exports.getOrder = async (req, res) => {
+exports.getOrders = (req, res, next) => {
 
     let restId = req.params.id;
-    let orderObj = req.body
 
+    restaurant.getOrders(restId)
+    .then( orders => {
+        res.status(200).send(orders);
+    })
+    .catch( err => {
+        res.status(500).send(err);
+        next(err);
+    })
+}
 
-    
-    res.status(200).send({msg: 'ok'});
+exports.getCategoriesById = (req, res, next) => {
+
+    let restId = req.params.id
+
+    restaurant.getAllCategories(restId)
+    .then( categories => {
+        res.status(200).send(categories);
+    })
+    .catch(err => {
+        res.status(500).send(err);
+        next(err);
+    })
 }
