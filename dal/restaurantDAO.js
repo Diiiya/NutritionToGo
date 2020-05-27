@@ -32,7 +32,7 @@ module.exports = class Restaurant{
         });
     }
 
-    async addOrder(object) { 
+    async addOrder(object, id) { 
 
         let order = {
             cusFirstName: object.cusFirstName,
@@ -43,7 +43,7 @@ module.exports = class Restaurant{
             phoneNumber: object.phoneNumber,
             delivery: object.delivery,
             totalPrice: object.totalPrice,
-            restaurantId: object.restaurantId
+            restaurantId: id
         }
 
         /*return OrderModel.create(order)

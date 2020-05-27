@@ -67,7 +67,6 @@ describe('RestaurantDAO', async function () {
                 phoneNumber: 98765432,
                 delivery: 0,
                 totalPrice: 210.00,
-                restaurantId: 1,
                 orderItems: [
                     {
                         itemName: 'Eatable item 1',
@@ -82,7 +81,7 @@ describe('RestaurantDAO', async function () {
                 ]
             }
 
-            let createdOrder = await restaurant.addOrder(orderExample);
+            let createdOrder = await restaurant.addOrder(orderExample, 1);
 
             console.log(createdOrder);
             let actual = 'Boaty';
