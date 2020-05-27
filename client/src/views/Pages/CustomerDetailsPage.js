@@ -160,9 +160,11 @@ function checkInput(errorClass, successClass) {
                                                                     localStorage.setItem("address", myAddress.value);
                                                                     localStorage.setItem("postalCode", myPostalCode.value);
                                                                     localStorage.setItem("city", myCity.value);
-                                                                    localStorage.setItem("phoneNumber", myPhoneNumber.value);
+                                                                    localStorage.setItem("phoneNumber", myPhoneNumber.value);  
+                                                                    
+                                                                    myPostMethod(myFirstName.value, myLastName.value, myAddress.value, myPostalCode.value, myCity.value, myPhoneNumber.value)
 
-                                                                    window.location.href = "/delivery-details-page";
+                                                                    //window.location.href = "/delivery-details-page";
                                                                 }
                                                                 else {
                                                                     myPhoneNumber.className = errorClass;
@@ -225,26 +227,59 @@ function checkInput(errorClass, successClass) {
     }
 }
 
+function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, cityPost, phoneNumberPost){
+
+    axios.post(`http://localhost:3000/api/restaurants/${localStorage.getItem("restaurantId")}/order`, JSON.stringify({
+        cusFirstName: firstNamePost,
+        cusSurname: lastNamePost,
+        address: addressPost,
+        postalCode: postalCodePost,
+        city: cityPost,
+        phoneNumber: phoneNumberPost,
+        delivery: false,
+        totalPrice: 120,
+        restaurantId: localStorage.getItem("restaurantId"),
+        OrderItems: [
+            {
+                itemName: "Salad 1",
+                quanity: 2,
+                price: 20.00
+            },
+            {
+                itemName: "Salad 2",
+                quanity: 1,
+                price: 40.00
+            }
+        ]
+    }))
+      .then((response) => {
+        console.log(response);
+      }, (error) => {
+        console.log(error);
+      });
+}
+
 export default function CustomerDetailsPage() {
 
     const [data, setData] = useState({ restaurant: [] });
     
     useEffect(async () => {
         const fetchData = async () => {
-            /*var config = {
-                headers: {'Access-Control-Allow-Origin': '*'}
-            };*/
-            const result = await axios('http://localhost:3000/api/restaurants/1');
+            const result = await axios(`http://localhost:3000/api/restaurants/1`);
 
             setData(result.data);
         };
 
         fetchData();
+
     }, []);
 
     const classes = useStyles();
     const classes2 = useStyles2();
     const [selectedEnabled, setSelectedEnabled] = React.useState("b");
+    
+    localStorage.setItem("restaurantId", data.id);
+    console.log(localStorage.getItem("restaurantId"));
 
     return (
         <div>
@@ -256,7 +291,7 @@ export default function CustomerDetailsPage() {
                 <GridContainer style={{ backgroundColor: "white" }}>
                     <GridItem xs={12} sm={12} md={3} style={{ paddingLeft: "0" }}>
                         <img
-                            src={restaurantImage}
+                            src={data.logoRelativePath}
                             alt="..."
                             height="230"
                             width="100%"
