@@ -81,13 +81,13 @@ describe('RestaurantDAO', async function () {
                 ]
             }
 
-            let createdOrder = await restaurant.addOrder(orderExample, 1);
-
+            let createdOrder = await restaurant.addOrder(orderExample, 1)
+            .then( )
             console.log(createdOrder);
             let actual = 'Boaty';
-            let expected = createdOrder.Order.cusFirstName;
+            let expected = createdOrder.cusFirstName;
 
-            await assert.equal(actual, expected);
+            assert.equal(actual, expected);
         })
     })
 
