@@ -39,14 +39,14 @@ export default function DeliveryDetailsPage() {
                     </GridItem>
                     <GridItem xs={12} sm={12} md={3}>
                         <h3><strong>Restaurant 1</strong></h3>
-                        <h5>Restaurant 1 address here</h5>
+                        {/*<h5>Restaurant 1 address here</h5>*/}
                     </GridItem>
                 </GridContainer>
 
                 <GridContainer style={{ marginTop: "60px" }}>
 
                     <GridItem xs={12} sm={12} md={5} style={{ marginTop: "60px", backgroundColor: "white", height: "450px", borderRight: '10px solid #e5e5e5' }}>
-                        <div style={{margin: "20px"}}>
+                        <div style={{ margin: "20px" }}>
                             <div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>Caesar salad</h4>
@@ -127,31 +127,31 @@ export default function DeliveryDetailsPage() {
                                 <h3 style={{ alignText: "center" }}><strong>YOUR ORDER HAS BEEN PLACED SUCCESFULLY!</strong></h3>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>First name:</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>John</h4>
+                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{localStorage.getItem("firstName")}</h4>
                                 </div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>Last name:</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>Doe</h4>
+                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{localStorage.getItem("lastName")}</h4>
                                 </div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>Address:</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>Address here</h4>
+                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{localStorage.getItem("address")}</h4>
                                 </div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>Postal code:</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>4000</h4>
+                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{localStorage.getItem("postalCode")}</h4>
                                 </div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>City:</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>Roskilde</h4>
+                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{localStorage.getItem("city")}</h4>
                                 </div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>Phone number:</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>88888888</h4>
+                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{localStorage.getItem("phoneNumber")}</h4>
                                 </div>
                             </GridItem>
                             <GridItem xs={12} sm={12} md={6} style={{ display: 'flex', alignItems: 'center' }}>
-                                <h4>Estimated delivery time: <strong>20:10</strong></h4>
+                                <h4>Estimated delivery time: <strong id="time">{new Date().getHours()}:{new Date().getMinutes()}</strong></h4>
                             </GridItem>
                         </GridContainer>
                         <Link to={"/restaurant-page"}>

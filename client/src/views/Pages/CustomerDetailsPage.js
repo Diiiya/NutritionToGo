@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import { makeStyles } from "@material-ui/core/styles";
 
 // @material-ui/icons
@@ -17,8 +18,7 @@ import styles from "assets/jss/material-kit-react/views/componentsSections/typog
 import styles2 from "assets/jss/material-kit-react/components/customInputStyle.js"
 
 import { Link } from "react-router-dom";
-import { Input } from "@material-ui/core";
-import { dangerColor } from "assets/jss/material-kit-react";
+import { configs } from "eslint-plugin-prettier";
 
 const useStyles = makeStyles(styles);
 const useStyles2 = makeStyles(styles2);
@@ -155,6 +155,13 @@ function checkInput(errorClass, successClass) {
                                                                 if (myPhoneNumber.value.match(Number)) {
                                                                     myPhoneNumber.className = successClass;
 
+                                                                    localStorage.setItem("firstName", myFirstName.value);
+                                                                    localStorage.setItem("lastName", myLastName.value);
+                                                                    localStorage.setItem("address", myAddress.value);
+                                                                    localStorage.setItem("postalCode", myPostalCode.value);
+                                                                    localStorage.setItem("city", myCity.value);
+                                                                    localStorage.setItem("phoneNumber", myPhoneNumber.value);
+
                                                                     window.location.href = "/delivery-details-page";
                                                                 }
                                                                 else {
@@ -220,6 +227,20 @@ function checkInput(errorClass, successClass) {
 
 export default function CustomerDetailsPage() {
 
+    const [data, setData] = useState({ restaurant: [] });
+    
+    useEffect(async () => {
+        const fetchData = async () => {
+            /*var config = {
+                headers: {'Access-Control-Allow-Origin': '*'}
+            };*/
+            const result = await axios('http://localhost:3000/api/restaurants/1');
+
+            setData(result.data);
+        };
+
+        fetchData();
+    }, []);
 
     const classes = useStyles();
     const classes2 = useStyles2();
@@ -241,10 +262,12 @@ export default function CustomerDetailsPage() {
                             width="100%"
                         />
                     </GridItem>
-                    <GridItem xs={12} sm={12} md={3}>
-                        <h3><strong>Restaurant 1</strong></h3>
-                        <h5>Restaurant 1 address here</h5>
-                    </GridItem>
+                    {data.restaurant.map(item => (
+                        <GridItem xs={12} sm={12} md={3}>
+                            <h3><strong>{item.name}</strong></h3>
+                            <h5>{item.address}</h5>
+                        </GridItem>
+                    ))}
                 </GridContainer>
 
                 <GridContainer style={{ marginTop: "60px" }}>
@@ -335,9 +358,10 @@ export default function CustomerDetailsPage() {
                                 <CustomInput labelText="City" id="city" formControlProps={{ fullWidth: true }} />
                                 <CustomInput labelText="Phone Number" id="phoneNumber" formControlProps={{ fullWidth: true }} />
                             </div>
-                            <Link > {/*} to={"/delivery-details-page"}>*/}
-                                <Button style={{ float: "right" }} color="success" onClick={() => checkInput(classes2.labelRootError, classes2.labelRootSuccess)}>CONFIRM AND PAY</Button>
+                            <Link to={"/restaurant-page"}>
+                            <Button style={{ float: "left" }} color="success">BACK TO MENU</Button>
                             </Link>
+                            <Button style={{ float: "right" }} color="success" onClick={() => checkInput(classes2.labelRootError, classes2.labelRootSuccess)}>CONFIRM AND PAY</Button>
                         </div>
                     </GridItem>
                 </GridContainer>
