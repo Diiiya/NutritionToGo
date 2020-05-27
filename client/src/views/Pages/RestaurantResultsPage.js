@@ -8,24 +8,16 @@ import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
 
-import restaurantImage from "assets/img/Rest1.jpg";
-
-import styles from "assets/jss/material-kit-react/views/componentsSections/typographyStyle.js";
-const useStyles = makeStyles(styles);
+import RestaurantList from "views/Pages/RestaurantList.js";
 
 
-const loadRestaurantsList = async () =>
-    await fetch("http://localhost:3000/api/restaurants")
-        .then(res => (res.ok ? res : Promise.reject(res)))
-        .then(res => res.json())
+export default class RestaurantResultsPage extends React.Component {
 
-export default function RestaurantResultsPage() {
-    const classes = useStyles();
+    constructor(props) {
+        super(props);
+    }
 
-    const { data, error, isLoading } = useAsync({ promiseFn: loadRestaurantsList })
-    if (isLoading) return "Loading..."
-    if (error) return `Something went wrong: ${error.message}`
-    if (data)
+    render() {
 
         return (
             <div>
@@ -33,13 +25,14 @@ export default function RestaurantResultsPage() {
                     brand="NUTRITION TO GO"
                     color="dark"
                 />
-                <div className={classes.container}>
+                <RestaurantList />
+                {/*  <div className={classes.container}>
                     <h3><strong>CHOOSE A RESTAURANT</strong></h3>
                     <GridContainer style={{ backgroundColor: "white" }}>
                         {data.map(restaurant =>
                             <Link to={`/restaurant-page/${restaurant.id}`}>
-                                <GridItem xs={12} sm={12} md={3} style={{ paddingLeft: "15" }}>
-                                    <h4 style={{ textAlignment: "center" }}><strong>RESTAURANT 1</strong></h4>
+                                <GridItem xs={12} sm={12} md={12} style={{ paddingLeft: "15" }}>
+                                    <h4 style={{ textAlignment: "center" }}><strong>{restaurant.id}</strong></h4>
                                     <img
                                         src={restaurantImage}
                                         alt="..."
@@ -51,7 +44,8 @@ export default function RestaurantResultsPage() {
                             </Link>
                         )}
                     </GridContainer>
-                </div>
+                        </div> */}
             </div>
         )
+    };
 }
