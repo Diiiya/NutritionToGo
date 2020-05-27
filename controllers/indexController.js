@@ -3,16 +3,16 @@ const restaurant = new Restaurant();
 
 exports.index = async (req, res) => {
 
-    let result = restaurant.getAll();
+    let result = await restaurant.getAll();
 
-    await res.status(200).send(result);
+    res.status(200).send(result);
 }
 
 exports.getByid = async (req, res) => {
 
-    let result = restaurant.getById(req.params.id);
+    let result = await restaurant.getById(req.params.id);
 
-    await res.status(200).send(result);
+    res.status(200).send(result);
 }
 
 exports.createOrder = async (req, res, next) => {
