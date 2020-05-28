@@ -27,3 +27,7 @@ jobs:
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
+      env: 
+        DB_DEV_USERNAME: ${{secrets.DB_DEV_USERNAME}}
+        DB_DEV_PASSWORD: ${{secrets.DB_DEV_PASSWORD}}
+        DB_DEV_SERVER: ${{secrets.DB_DEV_SERVER}}

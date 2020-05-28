@@ -6,6 +6,7 @@ module.exports = {
     password: process.env.DB_DEV_PASSWORD,
     database: process.env.DB_DEV_USERNAME,
     host: process.env.DB_DEV_SERVER,
+    //server: process.env.DB_DEV_SERVER,
     dialect: "mssql",
     logging: false,
     define:{
