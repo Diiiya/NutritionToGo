@@ -36,8 +36,8 @@ describe('RestaurantDAO', async function () {
 
     const restaurant = new Restaurant();
 
-    xcontext('getAll() tests', function () {
-        const restaurants = restaurant.getAll();
+    context('getAll() tests', async function () {
+        const restaurants = await restaurant.getAll();
 
         it('getAll(): has length of 3', async () => {
             //console.log(restaurants) //for debugging. If array of restaurants is not showing in console, then something is terribly wrong
