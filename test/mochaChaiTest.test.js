@@ -12,7 +12,7 @@ describe('Test Mocha & Chai', function() {
         it('has length of 5', function() {
             expect(numbers).to.have.lengthOf(5);
         })
-        xit('should skip this test', function() {
+        it('same', function() {
             expect(numbers).to.have.lengthOf(5);
         })
     })
@@ -24,7 +24,7 @@ describe('Test Mocha & Chai', function() {
         it('includes number 2', function() {
             assert.include(numbers, 2, 'array contains number 2')
         })
-        xit('should skip this test', function() {
+        it('has length of 5', function() {
             assert.lengthOf(numbers, 5, 'array contains 5 numbers')
         })
     })

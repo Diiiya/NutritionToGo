@@ -17,6 +17,7 @@ import restaurantImage from "assets/img/Rest1.jpg";
 import caesarSaImage from "assets/img/CaesarSa.png";
 import greekSaImage from "assets/img/Greeksalad.png";
 import styles from "assets/jss/material-kit-react/views/componentsSections/typographyStyle.js";
+import { FormatStrikethroughRounded } from "@material-ui/icons";
 //const useStyles = makeStyles(styles);
 
 //export default function RestaurantPage(props) {
@@ -24,13 +25,22 @@ import styles from "assets/jss/material-kit-react/views/componentsSections/typog
  const [selectedEnabled, setSelectedEnabled] = React.useState("b"); */
 
 
+
 export default class RestaurantPage extends React.Component {
     constructor(props) {
         super(props);
+        var today = new Date();
+        var hour = today.getHours();
+        var minutes = today.getMinutes();
         this.state = {
+            hour: hour,
+            minutes: minutes,
             restaurant: [],
             restaurantCategories: [],
             restaurantId: props.match.params.id,
+            // item should be full object with price, name etc
+            item: "item 1",
+            basket: []
         };
     }
 
@@ -38,11 +48,33 @@ export default class RestaurantPage extends React.Component {
         fetch(`http://localhost:3000/api/restaurants/${this.state.restaurantId}`)
             .then(response => response.json())
             .then(data => this.setState({ restaurant: data }));
+        fetch(`http://localhost:3000/api/restaurants/${this.state.restaurantId}/categories`)
+            .then(response => response.json())
+            .then(data => this.setState({ restaurantCategories: data }));
+    }
+
+    addToBasket(item) {
+        var basket = this.state.basket.concat(item)
+        this.setState({ basket: basket });
     }
 
     render() {
         console.log("daata: " + this.state.restaurant.name + " - " + this.state.restaurantId)
         console.log("daata: " + this.state.restaurant.MenuCategories)
+        let isOpen;
+        let orderButton;
+        if ((this.state.hour * 100 + this.state.minutes / 60 >= this.state.restaurant.openAtHour) && (this.state.hour * 100 + this.state.minutes / 60 <= this.state.restaurant.closedAtHour)) {
+            isOpen = <Badge color="success">OPEN</Badge>
+            orderButton = <Button color="success"
+                style={{ width: "100%" }}
+                onClick={() => this.addToBasket(this.state.item)}>ORDER</Button>
+        } else {
+            isOpen = <Badge color="danger">CLOSED</Badge>
+            orderButton = <Button color="success" style={{ width: "100%" }} disabled>ORDER</Button>
+        }
+
+        
+
         return (
             <div>
                 <Header
@@ -64,7 +96,7 @@ export default class RestaurantPage extends React.Component {
                             <h5>{this.state.restaurant.address},
                                 {this.state.restaurant.postalCode},
                                 {this.state.restaurant.city}</h5>
-                            <Badge color="success">OPEN</Badge>
+                            {isOpen}
                         </GridItem>
                         <GridItem xs={12} sm={12} md={3}>
                             <h4 style={{ marginTop: "20px" }}>Opening hours</h4>
@@ -72,7 +104,7 @@ export default class RestaurantPage extends React.Component {
                             <h5>To: {this.state.restaurant.closedAtHour}</h5>
                         </GridItem>
                         <GridItem xs={12} sm={12} md={3}>
-                            <h4 style={{ marginTop: "20px" }}>Delivery (up to {this.state.restaurant.openAtHour} mins)</h4>
+                            <h4 style={{ marginTop: "20px" }}>Delivery (up to {this.state.restaurant.deliveryTimeMinutes} mins)</h4>
                             <h5>Minimum price for delivery: {this.state.restaurant.deliveryLowerBoundary} DKK</h5>
                             <h5>Delivery price: {this.state.restaurant.deliveryPrice}</h5>
                             <h5>Free delivery for orders over {this.state.restaurant.deliveryUpperBoundary} DKK</h5>
@@ -84,91 +116,75 @@ export default class RestaurantPage extends React.Component {
                             <h3>
                                 <small>{this.state.restaurant.name} MENU:</small>
                             </h3>
-                            
-                            <CustomTabs
-                                headerColor="warning"
-                                tabs={[
-                                    {
-                                        tabName: "SALADS",
-                                        tabContent: (
-                                            <div style={{ display: "inline-block" }} >
-                                                
-                                                <div style={{
-                                                    width: "200px",
-                                                    textAlign: "center",
-                                                    display: "inline-block",
-                                                    paddingLeft: "10px"
-                                                }}>
-                                                    <img
-                                                        src={caesarSaImage}
-                                                        alt="..."
-                                                        height="180"
-                                                        width="100%"
-                                                    />
-                                                    <h4><strong>ITEM</strong></h4>
-                                                    <h5>Ingredients here ... Ingredients here ... Ingredients here ... </h5>
-                                                    <h4>150 DKK</h4>
-                                                    <Button color="success" style={{ width: "100%" }}>ORDER</Button>
+                            {this.state.restaurantCategories.map(category =>
+                                <CustomTabs
+                                    headerColor="warning"
+                                    tabs={[
+                                        {
+                                            tabName: `${category.categoryName}`,
+                                            tabContent: (
+                                                <div style={{ display: "inline-block" }} >
+
+                                                    <div style={{
+                                                        width: "200px",
+                                                        textAlign: "center",
+                                                        display: "inline-block",
+                                                        paddingLeft: "10px"
+                                                    }}>
+                                                        <img
+                                                            src={caesarSaImage}
+                                                            alt="..."
+                                                            height="180"
+                                                            width="100%"
+                                                        />
+                                                        <h4><strong>ITEM</strong></h4>
+                                                        <h5>Ingredients here ... Ingredients here ... Ingredients here ... </h5>
+                                                        <h4>150 DKK</h4>
+                                                        {orderButton}
+                                                    </div>
+                                                    <div style={{
+                                                        width: "200px",
+                                                        textAlign: "center",
+                                                        display: "inline-block",
+                                                        paddingLeft: "10px"
+                                                    }}>
+                                                        <img
+                                                            src={greekSaImage}
+                                                            alt="..."
+                                                            height="180"
+                                                            width="100%"
+                                                        />
+                                                        <h4><strong>GREEK SALAD</strong></h4>
+                                                        <h5>Ingredients here ... Ingredients here ... Ingredients here ... </h5>
+                                                        <h4>150 DKK</h4>
+                                                        {orderButton}
+                                                    </div>
+
                                                 </div>
-                                                <div style={{
-                                                    width: "200px",
-                                                    textAlign: "center",
-                                                    display: "inline-block",
-                                                    paddingLeft: "10px"
-                                                }}>
-                                                    <img
-                                                        src={greekSaImage}
-                                                        alt="..."
-                                                        height="180"
-                                                        width="100%"
-                                                    />
-                                                    <h4><strong>GREEK SALAD</strong></h4>
-                                                    <h5>Ingredients here ... Ingredients here ... Ingredients here ... </h5>
-                                                    <h4>150 DKK</h4>
-                                                    <Button color="success" style={{ width: "100%" }}>ORDER</Button>
-                                            </div> 
-                                                
-                                            </div>
-                                        )
-                                    },
-                                    {
-                                        tabName: "SANDWICHES",
-                                        tabContent: (
-                                            <p>...</p>
-                                        )
-                                    },
-                                    {
-                                        tabName: "DESSERTS",
-                                        tabContent: (
-                                            <p>...</p>
-                                        )
-                                    },
-                                    {
-                                        tabName: "BEVERAGES",
-                                        tabContent: (
-                                            <p>...</p>
-                                        )
-                                    }
-                                ]}
-                            />
-                            
+                                            )
+                                        }
+                                    ]}
+                                />
+                            )}
                         </GridItem>
                         <GridItem xs={12} sm={12} md={3} style={{ marginTop: "60px", backgroundColor: "white", height: "400px" }}>
                             <div>
                                 <h3 style={{ alignText: "center" }}><strong>YOUR BASKET:</strong></h3>
                                 <div>
+                                {this.state.basket.map(orderedItem =>
                                     <div>
                                         <h4 style={{ display: "inline-block" }}>Caesar salad</h4>
                                         <h4 style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
                                         <h4 style={{ display: "inline-block" }}>150 DKK</h4>
                                     </div>
-                                    <hr></hr>
-                                    <div>
+                                    
+                                )}
+                                  {/*  <div>
                                         <h4 style={{ display: "inline-block" }}>Greek salad</h4>
                                         <h4 style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
                                         <h4 style={{ display: "inline-block" }}>150 DKK</h4>
                                     </div>
-                                    <hr></hr>
+                                  <hr></hr> */}
                                 </div>
 
                                 {/*  <div style={{marginTop: "30px"}}>

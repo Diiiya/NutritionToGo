@@ -1,6 +1,7 @@
 const models = require('../db/models');
 const RestaurantModel = models.Restaurant;
 const MenuCategoryModel = models.MenuCategory;
+const MenuItemModel = models.MenuItem;
 const OrderModel = models.Order;
 const OrderItemModel = models.OrderItem;
 
@@ -26,15 +27,15 @@ module.exports = class Restaurant{
                         model: models.ItemIngredient
                     }]
                 }]
-            }]})
+            }]
+        })
         .catch( err => {
-            if (err)
+            if (err) 
             console.log(err)
         });
     }
 
-    async addOrder(object, id) { 
-
+    addOrder(object, id) { 
         let order = {
             cusFirstName: object.cusFirstName,
             cusSurname: object.cusSurname,
@@ -44,40 +45,13 @@ module.exports = class Restaurant{
             phoneNumber: object.phoneNumber,
             delivery: object.delivery,
             totalPrice: object.totalPrice,
-            restaurantId: id
+            restaurantId: id,
+            OrderItems: object.orderItems
         }
-
-        /*return OrderModel.create(order)
-        .then( createdOrder => {
-            object.orderItems.forEach( item => {
-                createdOrder.createOrderItem(item) //https://sequelize.org/master/class/lib/associations/has-many.js~HasMany.html               
-            });
-            //OrderItemModel.bulkCreate(object.orderItems).then( result => )
-
-        })
+        return OrderModel.create(order, {include: [models.OrderItem]})
         .catch( err => {
-            console.log(err)
-        })*/
-
-        let orderFinal = await OrderModel.create(order);
-
-        let items = [];
-        
-        await object.orderItems.forEach( item => {
-            items.push(orderFinal.createOrderItem(item))   //https://sequelize.org/master/class/lib/associations/has-many.js~HasMany.html   
-            
-        });
-
-        let result = await this.wrapVariables(orderFinal, items)
-
-        return result;
-    }
-
-    async wrapVariables(a, b)  {
-        return {
-            Order: a,
-            Items: b
-        }
+            console.log(err);
+        })
     }
 
     getOrders(id) {
@@ -90,14 +64,18 @@ module.exports = class Restaurant{
         })
     }
 
-    getAllCategories(id) {
-
-        return MenuCategoryModel.findAll({where: {restaurantId: id}})
+    getCategories(id) {
+        return MenuCategoryModel.findAll({where: {restaurantId: id}, include: [models.MenuItem]})
         .catch( err => {
             console.log(err)
         })
     }
 
-    
+    /*getMenuItems(id, cid) {
+        MenuCategory.findAll({where: {restaurantId: id}, include: [models.MenuItems]})
+        .then( menuCategories => {
+            
+        })
+    }*/
 
 } 
