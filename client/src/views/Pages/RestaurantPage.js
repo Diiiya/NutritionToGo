@@ -36,11 +36,11 @@ export default class RestaurantPage extends React.Component {
             hour: hour,
             minutes: minutes,
             restaurant: [],
-            restaurantCategories: [],
             restaurantId: props.match.params.id,
             // item should be full object with price, name etc
             item: "item 1",
-            basket: []
+            basket: [],
+            totalPrice: 0
         };
     }
 
@@ -48,32 +48,48 @@ export default class RestaurantPage extends React.Component {
         fetch(`http://localhost:3000/api/restaurants/${this.state.restaurantId}`)
             .then(response => response.json())
             .then(data => this.setState({ restaurant: data }));
-        fetch(`http://localhost:3000/api/restaurants/${this.state.restaurantId}/categories`)
-            .then(response => response.json())
-            .then(data => this.setState({ restaurantCategories: data }));
     }
 
     addToBasket(item) {
         var basket = this.state.basket.concat(item)
-        this.setState({ basket: basket });
+        this.setState({ basket: basket })
+    }
+
+    calculateTotalPrice(basket) {
+        var total = 0
+        basket.forEach(item => {
+            total = total + item.price
+        });
+        return total
     }
 
     render() {
+        // for some reason it doesn't work unless we check if menucategories exists
+        if (!this.state.restaurant.MenuCategories) {
+            return null;
+        }
+
+        // set total price
+        var total = this.calculateTotalPrice(this.state.basket)
+        if (total != this.state.totalPrice) {
+            this.setState({ totalPrice: total});
+        }
+        
         console.log("daata: " + this.state.restaurant.name + " - " + this.state.restaurantId)
         console.log("daata: " + this.state.restaurant.MenuCategories)
         let isOpen;
         let orderButton;
-        if ((this.state.hour * 100 + this.state.minutes / 60 >= this.state.restaurant.openAtHour) && (this.state.hour * 100 + this.state.minutes / 60 <= this.state.restaurant.closedAtHour)) {
+        
+        // I added '|| true' in the if statement to permanently allow myself to add items to the basket (for developing purposes) --- Jacob
+        if ((this.state.hour * 100 + this.state.minutes / 60 >= this.state.restaurant.openAtHour) && (this.state.hour * 100 + this.state.minutes / 60 <= this.state.restaurant.closedAtHour) || true) {
             isOpen = <Badge color="success">OPEN</Badge>
             orderButton = <Button color="success"
                 style={{ width: "100%" }}
-                onClick={() => this.addToBasket(this.state.item)}>ORDER</Button>
+                >ORDER</Button>
         } else {
             isOpen = <Badge color="danger">CLOSED</Badge>
             orderButton = <Button color="success" style={{ width: "100%" }} disabled>ORDER</Button>
         }
-
-        
 
         return (
             <div>
@@ -116,7 +132,7 @@ export default class RestaurantPage extends React.Component {
                             <h3>
                                 <small>{this.state.restaurant.name} MENU:</small>
                             </h3>
-                            {this.state.restaurantCategories.map(category =>
+                            {this.state.restaurant.MenuCategories.map(category =>
                                 <CustomTabs
                                     headerColor="warning"
                                     tabs={[
@@ -125,41 +141,29 @@ export default class RestaurantPage extends React.Component {
                                             tabContent: (
                                                 <div style={{ display: "inline-block" }} >
 
-                                                    <div style={{
-                                                        width: "200px",
-                                                        textAlign: "center",
-                                                        display: "inline-block",
-                                                        paddingLeft: "10px"
-                                                    }}>
-                                                        <img
-                                                            src={caesarSaImage}
-                                                            alt="..."
-                                                            height="180"
-                                                            width="100%"
-                                                        />
-                                                        <h4><strong>ITEM</strong></h4>
-                                                        <h5>Ingredients here ... Ingredients here ... Ingredients here ... </h5>
-                                                        <h4>150 DKK</h4>
-                                                        {orderButton}
-                                                    </div>
-                                                    <div style={{
-                                                        width: "200px",
-                                                        textAlign: "center",
-                                                        display: "inline-block",
-                                                        paddingLeft: "10px"
-                                                    }}>
-                                                        <img
-                                                            src={greekSaImage}
-                                                            alt="..."
-                                                            height="180"
-                                                            width="100%"
-                                                        />
-                                                        <h4><strong>GREEK SALAD</strong></h4>
-                                                        <h5>Ingredients here ... Ingredients here ... Ingredients here ... </h5>
-                                                        <h4>150 DKK</h4>
-                                                        {orderButton}
-                                                    </div>
+                                                    {category.MenuItems.map(menuItem =>
+                                                        <div style={{
+                                                            width: "200px",
+                                                            textAlign: "center",
+                                                            display: "inline-block",
+                                                            paddingLeft: "10px"
+                                                        }}>
+                                                            <img
+                                                                src={caesarSaImage}
+                                                                alt="..."
+                                                                height="180"
+                                                                width="100%"
+                                                            />
+                                                            <h4><strong>{menuItem.itemName}</strong></h4>
 
+                                                            {menuItem.ItemIngredients.map(ingredient =>
+                                                                <h5>{ingredient.ingredientName}</h5>
+                                                                )}
+                                                            <h4>{menuItem.price},- DKK</h4>
+                                                            {orderButton = <Button onClick={() => this.addToBasket(menuItem)}></Button>}
+                                                        </div>
+                                                        )}
+                                                
                                                 </div>
                                             )
                                         }
@@ -171,20 +175,13 @@ export default class RestaurantPage extends React.Component {
                             <div>
                                 <h3 style={{ alignText: "center" }}><strong>YOUR BASKET:</strong></h3>
                                 <div>
-                                {this.state.basket.map(orderedItem =>
-                                    <div>
-                                        <h4 style={{ display: "inline-block" }}>Caesar salad</h4>
-                                        <h4 style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
-                                        <h4 style={{ display: "inline-block" }}>150 DKK</h4>
-                                    </div>
-                                    
-                                )}
-                                  {/*  <div>
-                                        <h4 style={{ display: "inline-block" }}>Greek salad</h4>
-                                        <h4 style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
-                                        <h4 style={{ display: "inline-block" }}>150 DKK</h4>
-                                    </div>
-                                  <hr></hr> */}
+                                    {this.state.basket.map(orderedItem =>
+                                        <div>
+                                            <h4 style={{ display: "inline-block" }}>{orderedItem.itemName}</h4>
+                                            <h4 style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
+                                            <h4 style={{ display: "inline-block" }}>{orderedItem.price}</h4>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/*  <div style={{marginTop: "30px"}}>
@@ -242,7 +239,7 @@ export default class RestaurantPage extends React.Component {
                                 />
                                 </div> */}
 
-                                <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong>TOTAL PRICE: 300 DKK</strong></h4>
+                                <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong>TOTAL PRICE: {this.state.totalPrice}</strong></h4>
                                 <Button style={{ float: "right" }} color="success">CHECK OUT</Button>
                             </div>
                         </GridItem>
