@@ -19,6 +19,7 @@ exports.getByid = (req, res, next) => {
 
     restaurant.getById(restId)
     .then( restaurant => {
+        console.log(restaurant)
         res.status(200).send(restaurant)
     })
     .catch( err => {
@@ -60,12 +61,27 @@ exports.getCategoriesById = (req, res, next) => {
 
     let restId = req.params.id
 
-    restaurant.getAllCategories(restId)
+    restaurant.getCategories(restId)
     .then( categories => {
         res.status(200).send(categories);
     })
-    .catch(err => {
+    .catch( err => {
         //res.status(500).send(err);
         next(err);
     })
 }
+/*
+exports.getMenuItems = (req, res, next) => {
+
+    let restId = req.params.id
+    let catId = req.params.cid
+
+    restaurant.getMenuItems(restId, catId)
+    .then( menuItems => {
+        res.status(200).send(menuItems)
+    })
+    .catch( err => {
+        next(err)
+    })
+
+}*/

@@ -1,6 +1,7 @@
 const models = require('../db/models');
 const RestaurantModel = models.Restaurant;
 const MenuCategoryModel = models.MenuCategory;
+const MenuItemModel = models.MenuItem;
 const OrderModel = models.Order;
 const OrderItemModel = models.OrderItem;
 
@@ -63,10 +64,18 @@ module.exports = class Restaurant{
         })
     }
 
-    getAllCategories(id) {
-        return MenuCategoryModel.findAll({where: {restaurantId: id}})
+    getCategories(id) {
+        return MenuCategoryModel.findAll({where: {restaurantId: id}, include: [models.MenuItem]})
         .catch( err => {
             console.log(err)
         })
     }
+
+    /*getMenuItems(id, cid) {
+        MenuCategory.findAll({where: {restaurantId: id}, include: [models.MenuItems]})
+        .then( menuCategories => {
+            
+        })
+    }*/
+
 } 
