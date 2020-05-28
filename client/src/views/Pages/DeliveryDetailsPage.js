@@ -187,7 +187,7 @@ export default function DeliveryDetailsPage() {
                                 <h4>Estimated delivery time: <strong id="time">{localStorage.getItem("deliveryTimeMinutes")}</strong></h4>
                             </GridItem>
                         </GridContainer>
-                        <Link to={"/restaurant-page"}>
+                        <Link to={`/restaurant-page/${localStorage.getItem("restaurantId")}`}>
                             <Button style={{ float: "right" }} color="success">GO BACK TO HOME PAGE</Button>
                         </Link>
                     </GridItem>

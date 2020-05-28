@@ -19,6 +19,7 @@ import styles2 from "assets/jss/material-kit-react/components/customInputStyle.j
 
 import { Link } from "react-router-dom";
 import { configs } from "eslint-plugin-prettier";
+import { MenuItem } from "@material-ui/core";
 
 const useStyles = makeStyles(styles);
 const useStyles2 = makeStyles(styles2);
@@ -396,10 +397,10 @@ export default function CustomerDetailsPage() {
                                 <CustomInput labelText="City" id="city" formControlProps={{ fullWidth: true }} />
                                 <CustomInput labelText="Phone Number" id="phoneNumber" formControlProps={{ fullWidth: true }} />
                             </div>
-                            <Link to={"/restaurant-page"}>
-                            <Button style={{ float: "left" }} color="success">BACK TO MENU</Button>
+                            <Link to={`/restaurant-page/${localStorage.getItem("restaurantId")}`}>
+                            <Button id="backButton" style={{ float: "left" }} color="success">BACK TO MENU</Button>
                             </Link>
-                            <Button style={{ float: "right" }} color="success" onClick={() => checkInput(classes2.labelRootError, classes2.labelRootSuccess)}>CONFIRM AND PAY</Button>
+                            <Button id="confirmButton" style={{ float: "right" }} color="success" onClick={() => checkInput(classes2.labelRootError, classes2.labelRootSuccess)}>CONFIRM AND PAY</Button>
                         </div>
                     </GridItem>
                 </GridContainer>
