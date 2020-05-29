@@ -11,7 +11,7 @@ const assert = chai.assert;
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
-const Restaurant = require('../dal/restaurantDAO');
+const restaurant = require('../dal/restaurantDAO');
 const helpers = require('./helpers');
 
 const cleanDB = helpers.cleanDB;
@@ -24,27 +24,20 @@ before(async function () {
 
 })
 
-/*
-after( async function() { //uncomment this if you need a clean database after the tests, e.g. no test data within DB
-    this.timeout(15000);
-    await cleanDB();
-})
-*/
-
-describe('RestaurantDAO', async function () {
+describe('restaurantDAO tests', function () {
     //this.timeout(5000); //if test fails, try uncomment this
-
-    const restaurant = new Restaurant();
-
-    context('getAll() tests', async function () {
-        const restaurants = await restaurant.getAll();
-
+    context('getAll() tests', function () {
+    
         it('getAll(): has length of 3', async () => {
-            //console.log(restaurants) //for debugging. If array of restaurants is not showing in console, then something is terribly wrong
+
+            const restaurants = await restaurant.getAll();
+            
             assert.lengthOf(restaurants, 3, 'has lenght of 3');
         })
 
-        it('getAll(): restaurant at index 0 is named "Macro"', () => {
+        it('getAll(): restaurant at index 0 is named "Macro"', async () => {
+
+            const restaurants = await restaurant.getAll();
 
             let actual = restaurants[0].name;
             let expected = 'Macro';
@@ -53,17 +46,44 @@ describe('RestaurantDAO', async function () {
         })
     })
 
+    context('getById() tests', async function() {
+    
+        it('getById: id = 1 name is "Macro"', async () => {
+
+            const singleRestaurant = await restaurant.getById(1);
+
+            let actual = singleRestaurant.name;
+            let expected = 'Macro'
+        })
+
+        it('getById: id = 2 name is "Dhaba"', async () => {
+
+            const singleRestaurant = await restaurant.getById(2);
+
+            let actual = singleRestaurant.name;
+            let expected = 'Dhaba'
+        })
+
+        it('getById: id = 3 name is "Café Elysia"', async () => {
+
+            const singleRestaurant = await restaurant.getById(3);
+
+            let actual = singleRestaurant.name;
+            let expected = 'Café Elysia'
+        })
+    })
+
     context('addOrder() tests', function () {
-        it('addOrder(): created order has cusFirstName \'Boaty\'', async function () {
+        it('addOrder(): created order has cusFirstName \'Michael\'', async function () {
 
             var orderExample =
 
             {
-                cusFirstName: 'Boaty',
-                cusSurname: 'McBoatface',
+                cusFirstName: 'Michael',
+                cusSurname: 'Scott',
                 address: 'Some Street 123',
                 postalCode: 6500,
-                city: 'Tortuga',
+                city: 'Paper City',
                 phoneNumber: 98765432,
                 delivery: 0,
                 totalPrice: 210.00,
@@ -84,8 +104,21 @@ describe('RestaurantDAO', async function () {
             let createdOrder = await restaurant.addOrder(orderExample, 1)
             .then( )
             //console.log(createdOrder);
-            let actual = 'Boaty';
+            let actual = 'Michael';
             let expected = createdOrder.cusFirstName;
+
+            assert.equal(actual, expected);
+        })
+    })
+
+    context('getOrderById() tests', function() {
+        
+        it('getOrderById(): cusSurname should equal "Scott"', async () => {
+            
+            const singleOrder = await restaurant.getOrderById(1, 1);
+
+            let actual = singleOrder.cusSurname;
+            let expected = 'Scott'
 
             assert.equal(actual, expected);
         })
