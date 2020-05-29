@@ -12,6 +12,14 @@ import Button from "components/CustomButtons/Button.js";
 
 import restaurantImage from "assets/img/Rest1.jpg";
 import caesarSaImage from "assets/img/CaesarSa.png";
+import greekSaImage from "assets/img/Greeksalad.png";
+import styles from "assets/jss/material-kit-react/views/componentsSections/typographyStyle.js";
+import { FormatStrikethroughRounded, VerticalAlignCenter } from "@material-ui/icons";
+//const useStyles = makeStyles(styles);
+
+//export default function RestaurantPage(props) {
+/* const classes = useStyles();
+ const [selectedEnabled, setSelectedEnabled] = React.useState("b"); */
 
 export default class RestaurantPage extends React.Component {
     constructor(props) {
@@ -23,13 +31,11 @@ export default class RestaurantPage extends React.Component {
             hour: hour,
             minutes: minutes,
             restaurant: [],
-            restaurantCategories: [],
-            menuItems: [],
             restaurantId: props.match.params.id,
             item: [],
             basket: [],
             isRestaurantOpen: false,
-            deliveryOption: "pick-up",
+            deliveryOption: true,
             totalPrice: 0
         };
         this.addToBasket = this.addToBasket.bind(this);
@@ -39,56 +45,14 @@ export default class RestaurantPage extends React.Component {
         fetch(`http://localhost:3000/api/restaurants/${this.state.restaurantId}`)
             .then(response => response.json())
             .then(data => this.setState({ restaurant: data }));
-        fetch(`http://localhost:3000/api/restaurants/${this.state.restaurantId}/categories`)
-            .then(response => response.json())
-            .then(data => this.setState({ restaurantCategories: data }))
-            .then(this.interval = setInterval(() => this.isOpen(), 10000));
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.interval);
-    }
-
-    addToBasket(item) {
-        var basket = this.state.basket.concat(item)
-        var totalPrice = this.state.totalPrice + item.price;
-
-        if ((totalPrice < this.state.restaurant.deliveryLowerBoundary) && (this.state.deliveryOption === "delivery")) {
-            totalPrice = this.state.restaurant.deliveryLowerBoundary;
-        }
-
-        if ((totalPrice < this.state.restaurant.deliveryUpperBoundary) && (this.state.deliveryOption === "delivery") && (this.state.restaurant.deliveryPrice != null)) {
-            totalPrice += this.state.restaurant.deliveryPrice;
-        }
-
-        this.setState(prevState => {
-            return {
-                basket: basket,
-                totalPrice: totalPrice
-            }
-        });
     }
 
     checkPrice() {
         sessionStorage.setItem("basket", JSON.stringify(this.state.basket));
 
-        var orderPrice = this.state.totalPrice;
-        var totalOrderPrice = 0;
 
-        totalOrderPrice = orderPrice;
-
-        if(this.state.deliveryOption === "delivery"){
-            if(totalOrderPrice < this.state.restaurant.deliveryLowerBoundary){
-                totalOrderPrice = this.state.restaurant.deliveryLowerBoundary;
-            }
-            if(this.state.restaurant.deliveryUpperBoundary != null){
-                if(totalOrderPrice < this.state.restaurant.deliveryUpperBoundary){
-                    totalOrderPrice += this.state.restaurant.deliveryPrice;
-                }
-            }
-        }
         localStorage.setItem("deliveryType", this.state.deliveryOption);
-        localStorage.setItem("totalOrderPrice", totalOrderPrice);
+        localStorage.setItem("totalOrderPrice", this.state.totalPrice);
         this.goNext();
     }
 
@@ -96,6 +60,71 @@ export default class RestaurantPage extends React.Component {
         window.location.href = "/customer-details-page";
     }
 
+    addToBasket(item) {
+        var itemSpot = this.checkBasket(item)
+
+        if (itemSpot != -1) { // if an item location is returned, increment the quantity value by one
+            this.modifyBasketItem(item, 1)
+            }
+        else { // if no item location is found, add new menu item to basket
+            var a = item
+            a['quantity'] = 1
+
+            var basket = this.state.basket.concat(a)
+            this.setState({ basket: basket })
+        }
+    }
+
+    // checks if item (a) already exists in basket and if it does, returns its location in the array
+    checkBasket(a) {
+        var itemSpot = -1
+
+        for (let i = 0; i < this.state.basket.length; i++) {
+            if (this.state.basket[i].itemName == a.itemName && this.state.basket[i].price == a.price) {
+                itemSpot = i
+                break
+            }
+        }
+
+        return itemSpot
+    }
+
+    // modifies the quantity value of a basket item
+    modifyBasketItem(item, value) {
+        
+        var itemSpot = this.checkBasket(item)
+
+        var basket = this.state.basket
+        basket[itemSpot].quantity += value
+
+        // remove item if its quantity falls below 1
+        if (basket[itemSpot].quantity < 1) {
+            basket.splice(itemSpot, itemSpot+1)
+        }
+
+        this.setState({ basket: basket })
+    }
+
+    calculateTotalPrice(basket) {
+        var total = 0
+        basket.forEach(item => {
+            total = total + (item.price * item.quantity)
+        });
+
+        if (this.state.deliveryOption == true && basket.length > 0) {
+            if (total < this.state.restaurant.deliveryLowerBoundary) {
+                total = this.state.restaurant.deliveryLowerBoundary
+            }
+
+            if (this.state.restaurant.deliveryUpperBoundary != null) {
+                if (total < this.state.restaurant.deliveryUpperBoundary) {
+                    total = total + this.state.restaurant.deliveryPrice;
+                }
+            }
+        }
+
+        return total
+    }
 
     isOpen() {
         if ((this.state.hour * 100 + this.state.minutes / 60 >= this.state.restaurant.openAtHour) && (this.state.hour * 100 + this.state.minutes / 60 <= this.state.restaurant.closedAtHour)) {
@@ -105,12 +134,25 @@ export default class RestaurantPage extends React.Component {
     }
 
     render() {
+        if (!this.state.restaurant.MenuCategories) {
+            return null;
+        }
+
+        var total = this.calculateTotalPrice(this.state.basket)
+        if (this.state.totalPrice != total) {
+            this.setState({ totalPrice: total })
+        }
+
         console.log("daata: " + this.state.restaurant.name + " - " + this.state.restaurantId)
-        //  console.log("delivery option " + this.state.deliveryOption)
+        console.log("delivery option " + this.state.deliveryOption)
 
         localStorage.setItem("restaurantId", this.state.restaurant.id);
 
         let isOpen;
+        let orderButton;
+        let decreaseButton;
+        let increaseButton;
+        
         if ((this.state.hour * 100 + this.state.minutes / 60 >= this.state.restaurant.openAtHour) && (this.state.hour * 100 + this.state.minutes / 60 <= this.state.restaurant.closedAtHour)) {
             isOpen = <Badge color="success">OPEN</Badge>
         } else {
@@ -158,7 +200,7 @@ export default class RestaurantPage extends React.Component {
                             <h3>
                                 <small>{this.state.restaurant.name} MENU:</small>
                             </h3>
-                            {this.state.restaurantCategories.map(category =>
+                            {this.state.restaurant.MenuCategories.map(category =>
                                 <CustomTabs
                                     headerColor="warning"
                                     tabs={[
@@ -166,7 +208,7 @@ export default class RestaurantPage extends React.Component {
                                             tabName: `${category.categoryName}`,
                                             tabContent: (
                                                 <div style={{ display: "inline-block" }} >
-                                                    {category.MenuItems.map(item =>
+                                                    {category.MenuItems.map(menuItem =>
                                                         <div style={{
                                                             width: "200px",
                                                             textAlign: "center",
@@ -179,17 +221,13 @@ export default class RestaurantPage extends React.Component {
                                                                 height="180"
                                                                 width="100%"
                                                             />
-                                                            <h4><strong>{item.itemName}</strong></h4>
-                                                            <h4>{item.price} DKK</h4>
-                                                            {(() => {
-                                                                if (this.state.isRestaurantOpen) {
-                                                                    return <Button color="success"
-                                                                        style={{ width: "100%" }}
-                                                                        onClick={() => this.addToBasket(item)}>ORDER</Button>;
-                                                                } else {
-                                                                    return <Button color="success" style={{ width: "100%" }} disabled>ORDER</Button>;
-                                                                }
-                                                            })()}
+                                                            <h4><strong>{menuItem.itemName}</strong></h4>
+
+                                                            {menuItem.ItemIngredients.map(ingredient =>
+                                                                <h5>{ingredient.ingredientName}</h5>
+                                                                )}
+                                                            <h4>{menuItem.price},- DKK</h4>
+                                                            {orderButton = <Button onClick={() => this.addToBasket(menuItem)}>ORDER</Button>}
                                                         </div>
                                                     )}
                                                 </div>
@@ -205,24 +243,25 @@ export default class RestaurantPage extends React.Component {
                                 <div>
                                     {this.state.basket.map(orderedItem =>
                                         <div>
-                                            <div>
-                                                <h4 style={{ display: "inline-block", marginRight: "120px" }}>{orderedItem.itemName}</h4>
-                                                <h4 style={{ display: "inline-block" }}>{orderedItem.price} DKK</h4>
-                                            </div>
-                                            <hr></hr>
+                                            <h4 style={{ display: "inline-block" }}>{orderedItem.itemName}</h4>
+                                            <h4 style={{ display: "inline-block", marginLeft: "100px", marginRight: "30px" }}>
+                                                {decreaseButton = <Button onClick={() => this.modifyBasketItem(orderedItem, -1)} style={{ height: "16px", width : "10%"}}><text style={{marginTop: "-9px" }}>- </text></Button>}
+                                                <text>  {orderedItem.quantity}  </text>
+                                                {increaseButton = <Button onClick={() => this.modifyBasketItem(orderedItem, 1)} style={{ height: "16px", width : "10%"}}><text style={{marginTop: "-9px" }}> +</text></Button>}
+                                            </h4>
+                                            <h4 style={{ display: "inline-block" }}>{orderedItem.price}</h4>
                                         </div>
                                     )}
                                 </div>
 
                                 <div>
-                                    <input type="radio" id="pick-up" name="deliveryOption" value="pick-up" checked="checked"
-                                            onChange={(e) => this.setState({deliveryOption: e.target.value})}></input>
+                                    <input type="radio" id="pick-up" name="deliveryOption" value="pick-up" checked={this.state.deliveryOption}
+                                            onChange={(e) => this.setState({deliveryOption: true})}></input>
                                     <label for="pick-up">Pick-up</label><br></br>
                                     <input type="radio" id="delivery" name="deliveryOption" value="delivery"
-                                            onChange={(e) => this.setState({deliveryOption: e.target.value})}></input>
+                                            onChange={(e) => this.setState({deliveryOption: false})}></input>
                                     <label for="delivery">Delivery</label><br></br>
                                 </div>
-
 
                                 <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong>TOTAL PRICE: {this.state.totalPrice} DKK</strong></h4>
                                 <Button style={{ float: "right" }}
