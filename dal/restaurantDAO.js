@@ -5,11 +5,9 @@ const MenuItemModel = models.MenuItem;
 const OrderModel = models.Order;
 const OrderItemModel = models.OrderItem;
 
-module.exports = class Restaurant{
-    constructor() {
-    }
 
-    getAll() {
+
+    exports.getAll = function () {
         return RestaurantModel.findAll()
         .catch( err => {
             if (err)
@@ -17,7 +15,7 @@ module.exports = class Restaurant{
         });
     }
 
-    getById(id) {
+    exports.getById = function (id) {
         return RestaurantModel.findByPk(id, {
             include:[{
                 model: models.MenuCategory,
@@ -35,7 +33,7 @@ module.exports = class Restaurant{
         });
     }
 
-    addOrder(object, id) { 
+    exports.addOrder = function(object, id) { 
         let order = {
             cusFirstName: object.cusFirstName,
             cusSurname: object.cusSurname,
@@ -54,7 +52,7 @@ module.exports = class Restaurant{
         })
     }
 
-    getOrders(id) {
+    exports.getOrders = function(id) {
         return OrderModel.findAll({
             where: {restaurantId: id}, 
             include: [models.OrderItem]
@@ -64,7 +62,7 @@ module.exports = class Restaurant{
         })
     }
 
-    getCategories(id) {
+    exports.getCategories = function(id) {
         return MenuCategoryModel.findAll({where: {restaurantId: id}, include: [models.MenuItem]})
         .catch( err => {
             console.log(err)
@@ -77,5 +75,3 @@ module.exports = class Restaurant{
             
         })
     }*/
-
-} 

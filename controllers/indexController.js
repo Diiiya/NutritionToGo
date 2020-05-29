@@ -1,5 +1,4 @@
-const Restaurant = require('../dal/restaurantDAO')
-const restaurant = new Restaurant();
+const restaurant = require('../dal/restaurantDAO');
 
 exports.index = (req, res, next) => {
 
@@ -19,7 +18,7 @@ exports.getByid = (req, res, next) => {
 
     restaurant.getById(restId)
     .then( restaurant => {
-        console.log(restaurant)
+        //console.log(restaurant)
         res.status(200).send(restaurant)
     })
     .catch( err => {

@@ -36,6 +36,7 @@
     "sequelize-cli": "^5.5.1",
     "sequelize-test-helpers": "^1.2.2",
     "sinon": "^9.0.2",
-    "sinon-chai": "^3.5.0"
+    "sinon-chai": "^3.5.0",
+    "supertest": "^4.0.2"
   }
 }

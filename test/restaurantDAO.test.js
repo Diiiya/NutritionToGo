@@ -11,7 +11,7 @@ const assert = chai.assert;
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
-const Restaurant = require('../dal/restaurantDAO');
+const restaurant = require('../dal/restaurantDAO');
 const helpers = require('./helpers');
 
 const cleanDB = helpers.cleanDB;
@@ -34,8 +34,6 @@ after( async function() { //uncomment this if you need a clean database after th
 describe('RestaurantDAO', async function () {
     //this.timeout(5000); //if test fails, try uncomment this
 
-    const restaurant = new Restaurant();
-
     context('getAll() tests', async function () {
         const restaurants = await restaurant.getAll();
 
@@ -54,16 +52,16 @@ describe('RestaurantDAO', async function () {
     })
 
     context('addOrder() tests', function () {
-        it('addOrder(): created order has cusFirstName \'Boaty\'', async function () {
+        it('addOrder(): created order has cusFirstName \'Michael\'', async function () {
 
             var orderExample =
 
             {
-                cusFirstName: 'Boaty',
-                cusSurname: 'McBoatface',
+                cusFirstName: 'Michael',
+                cusSurname: 'Scott',
                 address: 'Some Street 123',
                 postalCode: 6500,
-                city: 'Tortuga',
+                city: 'Paper City',
                 phoneNumber: 98765432,
                 delivery: 0,
                 totalPrice: 210.00,
@@ -84,7 +82,7 @@ describe('RestaurantDAO', async function () {
             let createdOrder = await restaurant.addOrder(orderExample, 1)
             .then( )
             //console.log(createdOrder);
-            let actual = 'Boaty';
+            let actual = 'Michael';
             let expected = createdOrder.cusFirstName;
 
             assert.equal(actual, expected);
