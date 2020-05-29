@@ -50,7 +50,7 @@ export default class RestaurantPage extends React.Component {
     }
 
     checkPrice() {
-        sessionStorage.setItem("basket", JSON.stringify(this.state.basket));
+        localStorage.setItem("basket", JSON.stringify(this.state.basket));
         localStorage.setItem("deliveryType", this.state.deliveryOption);
         localStorage.setItem("totalOrderPrice", this.state.totalPrice);
         this.goNext();
@@ -219,7 +219,7 @@ export default class RestaurantPage extends React.Component {
                                                                 <h5>{ingredient.ingredientName}</h5>
                                                                 )}
                                                             <h4>{menuItem.price},- DKK</h4>
-                                                            {orderButton = <Button onClick={() => this.addToBasket(menuItem)}>ORDER</Button>}
+                                                            {orderButton = <Button id="orderButton" onClick={() => this.addToBasket(menuItem)}>ORDER</Button>}
                                                         </div>
                                                     )}
                                                 </div>
@@ -258,6 +258,7 @@ export default class RestaurantPage extends React.Component {
                                 <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong>TOTAL PRICE: {this.state.totalPrice} DKK</strong></h4>
                                 <Button style={{ float: "right" }}
                                     color="success"
+                                    id="checkOutButton"
                                     onClick={() => this.checkPrice()}>CHECK OUT</Button>
                             </div>
                         </GridItem>

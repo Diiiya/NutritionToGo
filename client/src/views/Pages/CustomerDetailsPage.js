@@ -23,6 +23,9 @@ import { MenuItem } from "@material-ui/core";
 import { forEach } from "async";
 import { SettingsBackupRestoreTwoTone } from "@material-ui/icons";
 
+
+import customerUtils from "../../utils/customerUtils";
+
 const useStyles = makeStyles(styles);
 const useStyles2 = makeStyles(styles2);
 
@@ -34,6 +37,13 @@ function checkInput(errorClass, successClass, deliveryTimeMinutes) {
     var myCity = document.getElementById("city");
     var myPhoneNumber = document.getElementById("phoneNumber");
 
+    var validData = customerUtils.validate(errorClass, successClass, myFirstName, myLastName, myAddress, myPostalCode, myCity, myPhoneNumber);
+
+    if(validData){
+        myPostMethod(myFirstName.value, myLastName.value, myAddress.value, myPostalCode.value, myCity.value, myPhoneNumber.value, deliveryTimeMinutes)
+    }
+    
+/*
     //=============================================First Name=====================================================
     if (myFirstName.value.length === 1 || myFirstName.value.length > 40) {
         myFirstName.className = errorClass;
@@ -226,24 +236,26 @@ function checkInput(errorClass, successClass, deliveryTimeMinutes) {
             myFirstName.className = errorClass;
             alert("error in first name");
         }
-    }
+    }*/
 }
 
 function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, cityPost, phoneNumberPost, deliveryTimeMi) {
 
-    var basketItems = JSON.parse(sessionStorage.getItem("basket"));
+    var basketItems = JSON.parse(localStorage.getItem("basket"));
 
     var finalOrderItems = [];
-
-    basketItems.forEach(item => {
-        finalOrderItems.push({
-            itemName: item.itemName,
-            quantity: item.quantity,
-            price: item.price,
+    if(basketItems != null){
+    
+        basketItems.forEach(item => {
+            finalOrderItems.push({
+                itemName: item.itemName,
+                quantity: item.quantity,
+                price: item.price,
+            })
         })
-    })
-
-    localStorage.setItem("orderedItems", JSON.stringify(finalOrderItems));
+    
+        localStorage.setItem("orderedItems", JSON.stringify(finalOrderItems));
+    }
 
     axios.post(`http://localhost:3000/api/restaurants/${localStorage.getItem("restaurantId")}/order`, {
         cusFirstName: firstNamePost,
@@ -288,15 +300,18 @@ function getDeliveryTime(deliveryTimeMinutes) {
 }
 
 function setMyBasket(){
-    var basket = JSON.parse(sessionStorage.getItem("basket"));
-
+    var basket = JSON.parse(localStorage.getItem("basket"));
     var htmlBasket = "";
 
-    basket.forEach(item => {
-
-        htmlBasket += '<div><label style={{ display: "inline-block", marginRight: "120px" }}>' + "Name: <strong>" + item.itemName + '</strong></label><label style={{ display: "inline-block" }}>' + " quantity: <strong>" + item.quantity + '</strong></label><label style={{ display: "inline-block" }}>' +  " price: <strong>" + item.price + '</strong>DKK</label><hr></hr></div>';      
-    });
-
+    if(basket !== null){
+        basket.forEach(item => {
+    
+            htmlBasket += '<div><label style={{ display: "inline-block", marginRight: "120px" }}>' + "Name: <strong>" + item.itemName + '</strong></label><label style={{ display: "inline-block" }}>' + " quantity: <strong>" + item.quantity + '</strong></label><label style={{ display: "inline-block" }}>' +  " price: <strong>" + item.price + '</strong>DKK</label><hr></hr></div>';      
+        });
+    }
+    else{
+        htmlBasket += "<h4>Empty basket</h4>";
+    }
     return {__html: htmlBasket};
 }
 
