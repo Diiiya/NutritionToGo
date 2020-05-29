@@ -15,6 +15,8 @@ import caesarSaImage from "assets/img/CaesarSa.png";
 import greekSaImage from "assets/img/Greeksalad.png";
 import styles from "assets/jss/material-kit-react/views/componentsSections/typographyStyle.js";
 import { FormatStrikethroughRounded, VerticalAlignCenter } from "@material-ui/icons";
+
+import restaurantUtil from "../../utils/restaurantUtil";
 //const useStyles = makeStyles(styles);
 
 //export default function RestaurantPage(props) {
@@ -49,7 +51,6 @@ export default class RestaurantPage extends React.Component {
 
     checkPrice() {
         sessionStorage.setItem("basket", JSON.stringify(this.state.basket));
-
 
         localStorage.setItem("deliveryType", this.state.deliveryOption);
         localStorage.setItem("totalOrderPrice", this.state.totalPrice);
@@ -107,23 +108,15 @@ export default class RestaurantPage extends React.Component {
 
     calculateTotalPrice(basket) {
         var total = 0
+
+        if (basket.length == 0) {
+            return 0;
+        }
         basket.forEach(item => {
             total = total + (item.price * item.quantity)
         });
 
-        if (this.state.deliveryOption == true && basket.length > 0) {
-            if (total < this.state.restaurant.deliveryLowerBoundary) {
-                total = this.state.restaurant.deliveryLowerBoundary
-            }
-
-            if (this.state.restaurant.deliveryUpperBoundary != null) {
-                if (total < this.state.restaurant.deliveryUpperBoundary) {
-                    total = total + this.state.restaurant.deliveryPrice;
-                }
-            }
-        }
-
-        return total
+        return restaurantUtil.calculatePrice(total, this.state.deliveryOption, this.state.restaurant.deliveryLowerBoundary, this.state.restaurant.deliveryUpperBoundary, this.state.restaurant.deliveryPrice)
     }
 
     isOpen() {
