@@ -231,9 +231,9 @@ function checkInput(errorClass, successClass, deliveryTimeMinutes) {
 
 function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, cityPost, phoneNumberPost, deliveryTimeMi) {
 
-    /*var radioDelivery = document.getElementById("delivery").checked;
+    /*var myDelivery = localStorage.getItem("deliveryType");
     var deliveryType = 0;
-    if (radioDelivery === "checked") {
+    if (myDelivery) {
         deliveryType = 1;
     }*/
 
@@ -244,7 +244,7 @@ function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, 
     basketItems.forEach(item => {
         finalOrderItems.push({
             itemName: item.itemName,
-            quantity: 1,
+            quantity: item.quantity,
             price: item.price,
         })
     })
@@ -293,15 +293,6 @@ function getDeliveryTime(deliveryTimeMinutes) {
     window.location.href = "/delivery-details-page";
 }
 
-/*function checkDeliveryType(){
-    if(localStorage.getItem("deliveryType") === "delivery"){
-        document.getElementById("delivery").checked="checked";
-    }
-    if(localStorage.getItem("deliveryType") === "pick-up"){
-        document.getElementById("pick-up").checked="checked";
-    }
-}*/
-
 function setMyBasket(){
     var basket = JSON.parse(sessionStorage.getItem("basket"));
 
@@ -309,15 +300,29 @@ function setMyBasket(){
 
     basket.forEach(item => {
 
-        htmlBasket += '<div><h4 style={{ display: "inline-block", marginRight: "120px" }}>' + item.itemName + '</h4><h4 style={{ display: "inline-block" }}>' + item.price + 'DKK</h4><hr></hr></div>';      
+        htmlBasket += '<div><label style={{ display: "inline-block", marginRight: "120px" }}>' + "Name: <strong>" + item.itemName + '</strong></label><label style={{ display: "inline-block" }}>' + " quantity: <strong>" + item.quantity + '</strong></label><label style={{ display: "inline-block" }}>' +  " price: <strong>" + item.price + '</strong>DKK</label><hr></hr></div>';      
     });
 
     return {__html: htmlBasket};
 }
 
+function checkDeliveryType(){
+    var myDelivery = localStorage.getItem("deliveryType");
+    if (myDelivery) {
+        localStorage.setItem("deliveryType", 1);
+        myDelivery = "delivery";
+    }
+    else{
+        localStorage.setItem("deliveryType", 0);
+        myDelivery = "pick-up";
+    }
+    return myDelivery;
+}
+
 export default function CustomerDetailsPage() {
     //checkDeliveryType();
-    //console.log(document.getElementById("delivery").checked);
+
+    var myDelivery = checkDeliveryType();
 
     const [data, setData] = useState({ restaurant: [] });
 
@@ -364,13 +369,7 @@ export default function CustomerDetailsPage() {
                             <div id="htmlBasket" dangerouslySetInnerHTML={setMyBasket()}>
                             </div>
                             <div style={{ marginTop: "30px" }}>
-                                <h4>Delivery type: {localStorage.getItem("deliveryType")}</h4>
-                                {/*<input type="radio" id="pick-up" name="deliveryOption" value="pick-up" checked="true"
-                                ></input>
-                                <label for="pick-up">Pick-up</label><br></br>
-                                <input type="radio" id="delivery" name="deliveryOption" value="delivery" checked="false"
-                                ></input>
-                                <label for="delivery">Delivery</label><br></br>*/}
+                                <h4>Delivery type: {myDelivery}</h4>
                             </div>
                             
                             <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong id="totalPriceItem">TOTAL PRICE: {localStorage.getItem("totalOrderPrice")} DKK</strong></h4>

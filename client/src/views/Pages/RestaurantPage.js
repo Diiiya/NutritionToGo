@@ -255,11 +255,11 @@ export default class RestaurantPage extends React.Component {
                                 </div>
 
                                 <div>
-                                    <input type="radio" id="pick-up" name="deliveryOption" value="pick-up" checked={this.state.deliveryOption}
-                                            onChange={(e) => this.setState({deliveryOption: true})}></input>
-                                    <label for="pick-up">Pick-up</label><br></br>
-                                    <input type="radio" id="delivery" name="deliveryOption" value="delivery"
+                                    <input type="radio" id="pick-up" name="deliveryOption" value="pick-up"
                                             onChange={(e) => this.setState({deliveryOption: false})}></input>
+                                    <label for="pick-up">Pick-up</label><br></br>
+                                    <input type="radio" id="delivery" name="deliveryOption" value="delivery" checked={this.state.deliveryOption}
+                                            onChange={(e) => this.setState({deliveryOption: true})}></input>
                                     <label for="delivery">Delivery</label><br></br>
                                 </div>
 
