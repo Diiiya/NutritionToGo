@@ -24,7 +24,7 @@ import { MenuItem } from "@material-ui/core";
 const useStyles = makeStyles(styles);
 const useStyles2 = makeStyles(styles2);
 
-function checkInput(errorClass, successClass) {
+function checkInput(errorClass, successClass, deliveryTimeMinutes) {
     var myFirstName = document.getElementById("firstName");
     var myLastName = document.getElementById("lastName");
     var myAddress = document.getElementById("address");
@@ -163,9 +163,8 @@ function checkInput(errorClass, successClass) {
                                                                     localStorage.setItem("city", myCity.value);
                                                                     localStorage.setItem("phoneNumber", myPhoneNumber.value);  
                                                                     
-                                                                    myPostMethod(myFirstName.value, myLastName.value, myAddress.value, myPostalCode.value, myCity.value, myPhoneNumber.value)
+                                                                    myPostMethod(myFirstName.value, myLastName.value, myAddress.value, myPostalCode.value, myCity.value, myPhoneNumber.value, deliveryTimeMinutes)
 
-                                                                    window.location.href = "/delivery-details-page";
                                                                 }
                                                                 else {
                                                                     myPhoneNumber.className = errorClass;
@@ -228,7 +227,7 @@ function checkInput(errorClass, successClass) {
     }
 }
 
-function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, cityPost, phoneNumberPost){
+function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, cityPost, phoneNumberPost, deliveryTimeMi){
 
     var radioDelivery = document.getElementById("radioDelivery").checked;
     var deliveryType = 0;
@@ -259,10 +258,34 @@ function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, 
         ]
     })
       .then((response) => {
+        console.log(response.data.id);
         console.log(response);
+          setOrderId(response.data.id, deliveryTimeMi);
       }, (error) => {
         console.log(error);
       });
+}
+
+function setOrderId(id, deliveryTimeM){
+    localStorage.setItem("orderId", id);
+    localStorage.setItem("orderedRestaurantId", localStorage.getItem("restaurantId"));
+    getDeliveryTime(deliveryTimeM)
+    window.location.href = "/delivery-details-page";
+}
+
+function getDeliveryTime(deliveryTimeMinutes){
+    var nowTime = new Date();
+    var myTime = new Date(nowTime.getTime() + deliveryTimeMinutes*60000);
+    var hours = myTime.getHours();
+    var minutesToCheck = myTime.getMinutes();
+    var minutes;
+    if(minutesToCheck < 10){
+        minutes = "0" + minutesToCheck;
+    }
+    else{
+        minutes = minutesToCheck;
+    }
+    localStorage.setItem("deliveryTimeMinutes", hours + ":" + minutes);
 }
 
 export default function CustomerDetailsPage() {
@@ -271,7 +294,7 @@ export default function CustomerDetailsPage() {
     
     useEffect(async () => {
         const fetchData = async () => {
-            const result = await axios(`http://localhost:3000/api/restaurants/1`);
+            const result = await axios(`http://localhost:3000/api/restaurants/${localStorage.getItem("restaurantId")}`);
 
             setData(result.data);
         };
@@ -284,8 +307,8 @@ export default function CustomerDetailsPage() {
     const classes2 = useStyles2();
     const [selectedEnabled, setSelectedEnabled] = React.useState("b");
     
-    localStorage.setItem("restaurantId", data.id);
-    console.log(localStorage.getItem("restaurantId"));
+    //localStorage.setItem("restaurantId", data.id);
+    //console.log(localStorage.getItem("restaurantId"));
 
     return (
         <div>
@@ -297,7 +320,7 @@ export default function CustomerDetailsPage() {
                 <GridContainer style={{ backgroundColor: "white" }}>
                     <GridItem xs={12} sm={12} md={3} style={{ paddingLeft: "0" }}>
                         <img
-                            src={restaurantImage}//{data.logoRelativePath} //no logo yet?
+                            src={restaurantImage}
                             alt="..."
                             height="230"
                             width="100%"
@@ -400,7 +423,7 @@ export default function CustomerDetailsPage() {
                             <Link to={`/restaurant-page/${localStorage.getItem("restaurantId")}`}>
                             <Button id="backButton" style={{ float: "left" }} color="success">BACK TO MENU</Button>
                             </Link>
-                            <Button id="confirmButton" style={{ float: "right" }} color="success" onClick={() => checkInput(classes2.labelRootError, classes2.labelRootSuccess)}>CONFIRM AND PAY</Button>
+                            <Button id="confirmButton" style={{ float: "right" }} color="success" onClick={() => checkInput(classes2.labelRootError, classes2.labelRootSuccess, data.deliveryTimeMinutes)}>CONFIRM AND PAY</Button>
                         </div>
                     </GridItem>
                 </GridContainer>

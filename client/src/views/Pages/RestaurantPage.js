@@ -84,6 +84,8 @@ export default class RestaurantPage extends React.Component {
         console.log("daata: " + this.state.restaurant.name + " - " + this.state.restaurantId)
         console.log("delivery option " + this.state.deliveryOption)
 
+        localStorage.setItem("restaurantId", this.state.restaurant.id);
+
         let isOpen;
         if ((this.state.hour * 100 + this.state.minutes / 60 >= this.state.restaurant.openAtHour) && (this.state.hour * 100 + this.state.minutes / 60 <= this.state.restaurant.closedAtHour)) {
             isOpen = <Badge color="success">OPEN</Badge>

@@ -63,6 +63,17 @@ module.exports = class Restaurant{
             console.log(err)
         })
     }
+    
+    //iza
+    getOrderById(restaurantId, orderId) {
+        return OrderModel.findByPk(orderId, {
+            where: {restaurantId: restaurantId}, 
+            include: [models.OrderItem]
+        })
+        .catch( err => {
+            console.log(err)
+        })
+    }
 
     getCategories(id) {
         return MenuCategoryModel.findAll({where: {restaurantId: id}, include: [models.MenuItem]})

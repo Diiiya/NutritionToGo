@@ -25,6 +25,9 @@ export default class RestaurantResultsPage extends React.Component {
                     brand="NUTRITION TO GO"
                     color="dark"
                 />
+                <Link to={`/delivery-details-page`}>
+                    <Button>Receipt of my last order</Button>
+                </Link>
                 <RestaurantList />
             </div>
         )

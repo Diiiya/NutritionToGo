@@ -17,41 +17,31 @@ import styles from "assets/jss/material-kit-react/views/componentsSections/typog
 import { Link } from "react-router-dom";
 const useStyles = makeStyles(styles);
 
-function getDeliveryTime(deliveryTimeMinutes){
-    var nowTime = new Date();
-    var myTime = new Date(nowTime.getTime() + deliveryTimeMinutes*60000);
-    var hours = myTime.getHours();
-    var minutesToCheck = myTime.getMinutes();
-    var minutes;
-    if(minutesToCheck < 10){
-        minutes = "0" + minutesToCheck;
-    }
-    else{
-        minutes = minutesToCheck;
-    }
-    localStorage.setItem("deliveryTimeMinutes", hours + ":" + minutes);
-}
 
 export default function DeliveryDetailsPage() {
+    console.log("restaurant: " + localStorage.getItem("orderedRestaurantId"));
+    console.log("order: ", localStorage.getItem("orderId"));
+    console.log(`http://localhost:3000/api/restaurants/${localStorage.getItem("orderedRestaurantId")}/order/${localStorage.getItem("orderId")}`);
     const classes = useStyles();
     const [selectedEnabled, setSelectedEnabled] = React.useState("b");
 
     const [data, setData] = useState({ restaurant: [] });
     
+    const [orderData, setOrder] = useState({ order: [] });
+    
     useEffect(async () => {
         const fetchData = async () => {
-            /*var config = {
-                headers: {'Access-Control-Allow-Origin': '*'}
-            };*/
-            const result = await axios('http://localhost:3000/api/restaurants/1');
-
+            const result = await axios(`http://localhost:3000/api/restaurants/${localStorage.getItem("orderedRestaurantId")}`);
             setData(result.data);
+
+            const result2 = await axios(`http://localhost:3000/api/restaurants/${localStorage.getItem("orderedRestaurantId")}/order/${localStorage.getItem("orderId")}`)
+            setOrder(result2.data);
+            console.log(result2.data.id);
+
         };
 
         fetchData();
     }, []);
-
-    getDeliveryTime(data.deliveryTimeMinutes);
 
     return (
 
@@ -160,34 +150,34 @@ export default function DeliveryDetailsPage() {
                                 <h3 style={{ alignText: "center" }}><strong>YOUR ORDER HAS BEEN PLACED SUCCESFULLY!</strong></h3>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>First name:</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{localStorage.getItem("firstName")}</h4>
+                                <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{orderData.cusFirstName}</h4>
                                 </div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>Last name:</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{localStorage.getItem("lastName")}</h4>
+                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{orderData.cusSurname}</h4>
                                 </div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>Address:</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{localStorage.getItem("address")}</h4>
+                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{orderData.address}</h4>
                                 </div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>Postal code:</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{localStorage.getItem("postalCode")}</h4>
+                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{orderData.postalCode}</h4>
                                 </div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>City:</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{localStorage.getItem("city")}</h4>
+                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{orderData.city}</h4>
                                 </div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>Phone number:</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{localStorage.getItem("phoneNumber")}</h4>
+                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{orderData.phoneNumber}</h4>
                                 </div>
                             </GridItem>
                             <GridItem xs={12} sm={12} md={6} style={{ display: 'flex', alignItems: 'center' }}>
                                 <h4>Estimated delivery time: <strong id="time">{localStorage.getItem("deliveryTimeMinutes")}</strong></h4>
                             </GridItem>
                         </GridContainer>
-                        <Link to={`/restaurant-page/${localStorage.getItem("restaurantId")}`}>
+                        <Link to={`/`}>//to={`/restaurant-page/${localStorage.getItem("restaurantId")}`}>
                             <Button style={{ float: "right" }} color="success">GO BACK TO HOME PAGE</Button>
                         </Link>
                     </GridItem>

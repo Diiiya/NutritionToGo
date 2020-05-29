@@ -57,6 +57,22 @@ exports.getOrders = (req, res, next) => {
     })
 }
 
+//iza
+exports.getOrderById = (req, res, next) => {
+
+    let restId = req.params.id;
+    let orderId = req.params.id2
+
+    restaurant.getOrderById(restId, orderId)
+    .then( order => {
+        res.status(200).send(order);
+    })
+    .catch( err => {
+        //res.status(500).send(err);
+        next(err);
+    })
+}
+
 exports.getCategoriesById = (req, res, next) => {
 
     let restId = req.params.id
