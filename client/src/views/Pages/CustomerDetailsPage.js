@@ -20,6 +20,8 @@ import styles2 from "assets/jss/material-kit-react/components/customInputStyle.j
 import { Link } from "react-router-dom";
 import { configs } from "eslint-plugin-prettier";
 import { MenuItem } from "@material-ui/core";
+import { forEach } from "async";
+import { SettingsBackupRestoreTwoTone } from "@material-ui/icons";
 
 const useStyles = makeStyles(styles);
 const useStyles2 = makeStyles(styles2);
@@ -161,8 +163,8 @@ function checkInput(errorClass, successClass, deliveryTimeMinutes) {
                                                                     localStorage.setItem("address", myAddress.value);
                                                                     localStorage.setItem("postalCode", myPostalCode.value);
                                                                     localStorage.setItem("city", myCity.value);
-                                                                    localStorage.setItem("phoneNumber", myPhoneNumber.value);  
-                                                                    
+                                                                    localStorage.setItem("phoneNumber", myPhoneNumber.value);
+
                                                                     myPostMethod(myFirstName.value, myLastName.value, myAddress.value, myPostalCode.value, myCity.value, myPhoneNumber.value, deliveryTimeMinutes)
 
                                                                 }
@@ -227,13 +229,27 @@ function checkInput(errorClass, successClass, deliveryTimeMinutes) {
     }
 }
 
-function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, cityPost, phoneNumberPost, deliveryTimeMi){
+function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, cityPost, phoneNumberPost, deliveryTimeMi) {
 
-    var radioDelivery = document.getElementById("radioDelivery").checked;
+    /*var radioDelivery = document.getElementById("delivery").checked;
     var deliveryType = 0;
-    if (radioDelivery === true){
+    if (radioDelivery === "checked") {
         deliveryType = 1;
-    }
+    }*/
+
+    var basketItems = JSON.parse(sessionStorage.getItem("basket"));
+
+    var finalOrderItems = [];
+
+    basketItems.forEach(item => {
+        finalOrderItems.push({
+            itemName: item.itemName,
+            quantity: 1,
+            price: item.price,
+        })
+    })
+
+    localStorage.setItem("orderedItems", JSON.stringify(finalOrderItems));
 
     axios.post(`http://localhost:3000/api/restaurants/${localStorage.getItem("restaurantId")}/order`, {
         cusFirstName: firstNamePost,
@@ -242,56 +258,69 @@ function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, 
         postalCode: postalCodePost,
         city: cityPost,
         phoneNumber: phoneNumberPost,
-        delivery: deliveryType,
-        totalPrice: 120,
-        orderItems: [
-            {
-                itemName: "Salad 1",
-                quantity: 2,
-                price: 20.00
-            },
-            {
-                itemName: "Salad 2",
-                quantity: 1,
-                price: 40.00
-            }
-        ]
-    })
-      .then((response) => {
-        console.log(response.data.id);
-        console.log(response);
-          setOrderId(response.data.id, deliveryTimeMi);
-      }, (error) => {
-        console.log(error);
-      });
+        delivery: localStorage.getItem("deliveryType"),
+        totalPrice: localStorage.getItem("totalOrderPrice"),
+        orderItems: finalOrderItems
+        })
+        .then((response) => {
+            console.log(response.data.id);
+            console.log(response);
+            setOrderId(response.data.id, deliveryTimeMi);
+        }, (error) => {
+            console.log(error);
+        });
 }
 
-function setOrderId(id, deliveryTimeM){
+function setOrderId(id, deliveryTimeM) {
     localStorage.setItem("orderId", id);
     localStorage.setItem("orderedRestaurantId", localStorage.getItem("restaurantId"));
     getDeliveryTime(deliveryTimeM)
-    window.location.href = "/delivery-details-page";
 }
 
-function getDeliveryTime(deliveryTimeMinutes){
+function getDeliveryTime(deliveryTimeMinutes) {
     var nowTime = new Date();
-    var myTime = new Date(nowTime.getTime() + deliveryTimeMinutes*60000);
+    var myTime = new Date(nowTime.getTime() + deliveryTimeMinutes * 60000);
     var hours = myTime.getHours();
     var minutesToCheck = myTime.getMinutes();
     var minutes;
-    if(minutesToCheck < 10){
+    if (minutesToCheck < 10) {
         minutes = "0" + minutesToCheck;
     }
-    else{
+    else {
         minutes = minutesToCheck;
     }
     localStorage.setItem("deliveryTimeMinutes", hours + ":" + minutes);
+    window.location.href = "/delivery-details-page";
+}
+
+/*function checkDeliveryType(){
+    if(localStorage.getItem("deliveryType") === "delivery"){
+        document.getElementById("delivery").checked="checked";
+    }
+    if(localStorage.getItem("deliveryType") === "pick-up"){
+        document.getElementById("pick-up").checked="checked";
+    }
+}*/
+
+function setMyBasket(){
+    var basket = JSON.parse(sessionStorage.getItem("basket"));
+
+    var htmlBasket = "";
+
+    basket.forEach(item => {
+
+        htmlBasket += '<div><h4 style={{ display: "inline-block", marginRight: "120px" }}>' + item.itemName + '</h4><h4 style={{ display: "inline-block" }}>' + item.price + 'DKK</h4><hr></hr></div>';      
+    });
+
+    return {__html: htmlBasket};
 }
 
 export default function CustomerDetailsPage() {
+    //checkDeliveryType();
+    //console.log(document.getElementById("delivery").checked);
 
     const [data, setData] = useState({ restaurant: [] });
-    
+
     useEffect(async () => {
         const fetchData = async () => {
             const result = await axios(`http://localhost:3000/api/restaurants/${localStorage.getItem("restaurantId")}`);
@@ -305,10 +334,6 @@ export default function CustomerDetailsPage() {
 
     const classes = useStyles();
     const classes2 = useStyles2();
-    const [selectedEnabled, setSelectedEnabled] = React.useState("b");
-    
-    //localStorage.setItem("restaurantId", data.id);
-    //console.log(localStorage.getItem("restaurantId"));
 
     return (
         <div>
@@ -326,87 +351,29 @@ export default function CustomerDetailsPage() {
                             width="100%"
                         />
                     </GridItem>
-                        <GridItem xs={12} sm={12} md={3}>
-                            <h3><strong>{data.name}</strong></h3>
-                            <h5>{data.address}</h5>
-                        </GridItem>
+                    <GridItem xs={12} sm={12} md={3}>
+                        <h3><strong>{data.name}</strong></h3>
+                        <h5>{data.address}</h5>
+                    </GridItem>
                 </GridContainer>
 
                 <GridContainer style={{ marginTop: "60px" }}>
                     <GridItem xs={12} sm={12} md={5} style={{ marginTop: "60px", backgroundColor: "white", height: "500px", borderRight: '10px solid #e5e5e5' }}>
                         <div style={{ margin: "20px" }}>
                             <h3 style={{ alignText: "center" }}><strong>YOUR BASKET:</strong></h3>
-                            <div>
-                                <div>
-                                    <h4 id="itemName" style={{ display: "inline-block" }}>Caesar salad</h4>
-                                    <h4 id="itemQuantity" style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
-                                    <h4 id="item Price" style={{ display: "inline-block" }}>150 DKK</h4>
-                                </div>
-                                <hr></hr>
-                                <div>
-                                    <h4 style={{ display: "inline-block" }}>Greek salad</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
-                                    <h4 style={{ display: "inline-block" }}>150 DKK</h4>
-                                </div>
-                                <hr></hr>
+                            <div id="htmlBasket" dangerouslySetInnerHTML={setMyBasket()}>
                             </div>
-
                             <div style={{ marginTop: "30px" }}>
-                                <FormControlLabel
-                                    control={
-                                        <Radio id="radioPickUp"
-                                            checked={selectedEnabled === "a"}
-                                            onChange={() => setSelectedEnabled("a")}
-                                            value="a"
-                                            name="radio button enabled"
-                                            aria-label="A"
-                                            icon={
-                                                <FiberManualRecord className={classes.radioUnchecked} />
-                                            }
-                                            checkedIcon={
-                                                <FiberManualRecord className={classes.radioChecked} />
-                                            }
-                                            classes={{
-                                                checked: classes.radio,
-                                                root: classes.radioRoot
-                                            }}
-                                        />
-                                    }
-                                    classes={{
-                                        label: classes.label,
-                                        root: classes.labelRoot
-                                    }}
-                                    label="Pick-up"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Radio id="radioDelivery"
-                                            checked={selectedEnabled === "b"}
-                                            onChange={() => setSelectedEnabled("b")}
-                                            value="b"
-                                            name="radio button enabled"
-                                            aria-label="B"
-                                            icon={
-                                                <FiberManualRecord className={classes.radioUnchecked} />
-                                            }
-                                            checkedIcon={
-                                                <FiberManualRecord className={classes.radioChecked} />
-                                            }
-                                            classes={{
-                                                checked: classes.radio,
-                                                root: classes.radioRoot
-                                            }}
-                                        />
-                                    }
-                                    classes={{
-                                        label: classes.label,
-                                        root: classes.labelRoot
-                                    }}
-                                    label="Delivery"
-                                />
+                                <h4>Delivery type: {localStorage.getItem("deliveryType")}</h4>
+                                {/*<input type="radio" id="pick-up" name="deliveryOption" value="pick-up" checked="true"
+                                ></input>
+                                <label for="pick-up">Pick-up</label><br></br>
+                                <input type="radio" id="delivery" name="deliveryOption" value="delivery" checked="false"
+                                ></input>
+                                <label for="delivery">Delivery</label><br></br>*/}
                             </div>
-
-                            <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong id="totalPriceItem">TOTAL PRICE: 300 DKK</strong></h4>
+                            
+                            <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong id="totalPriceItem">TOTAL PRICE: {localStorage.getItem("totalOrderPrice")} DKK</strong></h4>
                         </div>
                     </GridItem>
                     <GridItem xs={12} sm={12} md={7} style={{ marginTop: "60px", backgroundColor: "white", height: "500px" }}>
@@ -421,7 +388,7 @@ export default function CustomerDetailsPage() {
                                 <CustomInput labelText="Phone Number" id="phoneNumber" formControlProps={{ fullWidth: true }} />
                             </div>
                             <Link to={`/restaurant-page/${localStorage.getItem("restaurantId")}`}>
-                            <Button id="backButton" style={{ float: "left" }} color="success">BACK TO MENU</Button>
+                                <Button id="backButton" style={{ float: "left" }} color="success">BACK TO MENU</Button>
                             </Link>
                             <Button id="confirmButton" style={{ float: "right" }} color="success" onClick={() => checkInput(classes2.labelRootError, classes2.labelRootSuccess, data.deliveryTimeMinutes)}>CONFIRM AND PAY</Button>
                         </div>
