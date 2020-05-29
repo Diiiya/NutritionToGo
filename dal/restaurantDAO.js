@@ -61,6 +61,17 @@ const OrderItemModel = models.OrderItem;
             console.log(err)
         })
     }
+    
+    //iza
+    getOrderById(restaurantId, orderId) {
+        return OrderModel.findByPk(orderId, {
+            where: {restaurantId: restaurantId}, 
+            include: [models.OrderItem]
+        })
+        .catch( err => {
+            console.log(err)
+        })
+    }
 
     exports.getCategories = function(id) {
         return MenuCategoryModel.findAll({where: {restaurantId: id}, include: [models.MenuItem]})

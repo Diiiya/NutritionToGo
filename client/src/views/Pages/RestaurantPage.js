@@ -1,5 +1,4 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 
 // @material-ui/icons
 import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
@@ -10,21 +9,9 @@ import GridItem from "components/Grid/GridItem.js";
 import Badge from "components/Badge/Badge.js";
 import CustomTabs from "components/CustomTabs/CustomTabs.js";
 import Button from "components/CustomButtons/Button.js";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio from "@material-ui/core/Radio";
 
 import restaurantImage from "assets/img/Rest1.jpg";
 import caesarSaImage from "assets/img/CaesarSa.png";
-import greekSaImage from "assets/img/Greeksalad.png";
-import styles from "assets/jss/material-kit-react/views/componentsSections/typographyStyle.js";
-import { FormatStrikethroughRounded } from "@material-ui/icons";
-//const useStyles = makeStyles(styles);
-
-//export default function RestaurantPage(props) {
-/* const classes = useStyles();
- const [selectedEnabled, setSelectedEnabled] = React.useState("b"); */
-
-
 
 export default class RestaurantPage extends React.Component {
     constructor(props) {
@@ -37,11 +24,15 @@ export default class RestaurantPage extends React.Component {
             minutes: minutes,
             restaurant: [],
             restaurantCategories: [],
+            menuItems: [],
             restaurantId: props.match.params.id,
-            // item should be full object with price, name etc
-            item: "item 1",
-            basket: []
+            item: [],
+            basket: [],
+            isRestaurantOpen: false,
+            deliveryOption: "pick-up",
+            totalPrice: 0
         };
+        this.addToBasket = this.addToBasket.bind(this);
     }
 
     componentDidMount() {
@@ -50,30 +41,57 @@ export default class RestaurantPage extends React.Component {
             .then(data => this.setState({ restaurant: data }));
         fetch(`http://localhost:3000/api/restaurants/${this.state.restaurantId}/categories`)
             .then(response => response.json())
-            .then(data => this.setState({ restaurantCategories: data }));
+            .then(data => this.setState({ restaurantCategories: data }))
+            .then(this.interval = setInterval(() => this.isOpen(), 10000));
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
     }
 
     addToBasket(item) {
         var basket = this.state.basket.concat(item)
-        this.setState({ basket: basket });
+        var totalPrice = this.state.totalPrice + item.price;
+
+        if ((totalPrice < this.state.restaurant.deliveryLowerBoundary) && (this.state.deliveryOption == "delivery")) {
+            totalPrice = this.state.restaurant.deliveryLowerBoundary;
+        }
+
+        if ((totalPrice < this.state.restaurant.deliveryUpperBoundary) && (this.state.deliveryOption == "delivery") && (this.state.restaurant.deliveryPrice != null)) {
+            totalPrice += this.state.restaurant.deliveryPrice;
+        }
+
+        this.setState(prevState => {
+            return {
+                basket: basket,
+                totalPrice: totalPrice
+            }
+        });
+    }
+
+    checkPrice() {
+
+    }
+
+    isOpen() {
+        if ((this.state.hour * 100 + this.state.minutes / 60 >= this.state.restaurant.openAtHour) && (this.state.hour * 100 + this.state.minutes / 60 <= this.state.restaurant.closedAtHour)) {
+            this.setState({ isRestaurantOpen: true });
+        } else {
+        }
     }
 
     render() {
         console.log("daata: " + this.state.restaurant.name + " - " + this.state.restaurantId)
-        console.log("daata: " + this.state.restaurant.MenuCategories)
+        console.log("delivery option " + this.state.deliveryOption)
+
+        localStorage.setItem("restaurantId", this.state.restaurant.id);
+
         let isOpen;
-        let orderButton;
         if ((this.state.hour * 100 + this.state.minutes / 60 >= this.state.restaurant.openAtHour) && (this.state.hour * 100 + this.state.minutes / 60 <= this.state.restaurant.closedAtHour)) {
             isOpen = <Badge color="success">OPEN</Badge>
-            orderButton = <Button color="success"
-                style={{ width: "100%" }}
-                onClick={() => this.addToBasket(this.state.item)}>ORDER</Button>
         } else {
             isOpen = <Badge color="danger">CLOSED</Badge>
-            orderButton = <Button color="success" style={{ width: "100%" }} disabled>ORDER</Button>
         }
-
-        
 
         return (
             <div>
@@ -124,42 +142,32 @@ export default class RestaurantPage extends React.Component {
                                             tabName: `${category.categoryName}`,
                                             tabContent: (
                                                 <div style={{ display: "inline-block" }} >
-
-                                                    <div style={{
-                                                        width: "200px",
-                                                        textAlign: "center",
-                                                        display: "inline-block",
-                                                        paddingLeft: "10px"
-                                                    }}>
-                                                        <img
-                                                            src={caesarSaImage}
-                                                            alt="..."
-                                                            height="180"
-                                                            width="100%"
-                                                        />
-                                                        <h4><strong>ITEM</strong></h4>
-                                                        <h5>Ingredients here ... Ingredients here ... Ingredients here ... </h5>
-                                                        <h4>150 DKK</h4>
-                                                        {orderButton}
-                                                    </div>
-                                                    <div style={{
-                                                        width: "200px",
-                                                        textAlign: "center",
-                                                        display: "inline-block",
-                                                        paddingLeft: "10px"
-                                                    }}>
-                                                        <img
-                                                            src={greekSaImage}
-                                                            alt="..."
-                                                            height="180"
-                                                            width="100%"
-                                                        />
-                                                        <h4><strong>GREEK SALAD</strong></h4>
-                                                        <h5>Ingredients here ... Ingredients here ... Ingredients here ... </h5>
-                                                        <h4>150 DKK</h4>
-                                                        {orderButton}
-                                                    </div>
-
+                                                    {category.MenuItems.map(item =>
+                                                        <div style={{
+                                                            width: "200px",
+                                                            textAlign: "center",
+                                                            display: "inline-block",
+                                                            paddingLeft: "10px"
+                                                        }}>
+                                                            <img
+                                                                src={caesarSaImage}
+                                                                alt="..."
+                                                                height="180"
+                                                                width="100%"
+                                                            />
+                                                            <h4><strong>{item.itemName}</strong></h4>
+                                                            <h4>{item.price} DKK</h4>
+                                                            {(() => {
+                                                                if (this.state.isRestaurantOpen) {
+                                                                    return <Button color="success"
+                                                                        style={{ width: "100%" }}
+                                                                        onClick={() => this.addToBasket(item)}>ORDER</Button>;
+                                                                } else {
+                                                                    return <Button color="success" style={{ width: "100%" }} disabled>ORDER</Button>;
+                                                                }
+                                                            })()}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )
                                         }
@@ -171,79 +179,31 @@ export default class RestaurantPage extends React.Component {
                             <div>
                                 <h3 style={{ alignText: "center" }}><strong>YOUR BASKET:</strong></h3>
                                 <div>
-                                {this.state.basket.map(orderedItem =>
-                                    <div>
-                                        <h4 style={{ display: "inline-block" }}>Caesar salad</h4>
-                                        <h4 style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
-                                        <h4 style={{ display: "inline-block" }}>150 DKK</h4>
-                                    </div>
-                                    
-                                )}
-                                  {/*  <div>
-                                        <h4 style={{ display: "inline-block" }}>Greek salad</h4>
-                                        <h4 style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
-                                        <h4 style={{ display: "inline-block" }}>150 DKK</h4>
-                                    </div>
-                                  <hr></hr> */}
+                                    {this.state.basket.map(orderedItem =>
+                                        <div>
+                                            <div>
+                                                <h4 style={{ display: "inline-block", marginRight: "120px" }}>{orderedItem.itemName}</h4>
+                                                <h4 style={{ display: "inline-block" }}>{orderedItem.price} DKK</h4>
+                                            </div>
+                                            <hr></hr>
+                                        </div>
+                                    )}
                                 </div>
 
-                                {/*  <div style={{marginTop: "30px"}}>
-                                <FormControlLabel
-                                    control={
-                                        <Radio
-                                            checked={selectedEnabled === "a"}
-                                            onChange={() => setSelectedEnabled("a")}
-                                            value="a"
-                                            name="radio button enabled"
-                                            aria-label="A"
-                                            icon={
-                                                <FiberManualRecord className={classes.radioUnchecked} />
-                                            }
-                                            checkedIcon={
-                                                <FiberManualRecord className={classes.radioChecked} />
-                                            }
-                                            classes={{
-                                                checked: classes.radio,
-                                                root: classes.radioRoot
-                                            }}
-                                        />
-                                    }
-                                    classes={{
-                                        label: classes.label,
-                                        root: classes.labelRoot
-                                    }}
-                                    label="Pick-up"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Radio
-                                            checked={selectedEnabled === "b"}
-                                            onChange={() => setSelectedEnabled("b")}
-                                            value="b"
-                                            name="radio button enabled"
-                                            aria-label="B"
-                                            icon={
-                                                <FiberManualRecord className={classes.radioUnchecked} />
-                                            }
-                                            checkedIcon={
-                                                <FiberManualRecord className={classes.radioChecked} />
-                                            }
-                                            classes={{
-                                                checked: classes.radio,
-                                                root: classes.radioRoot
-                                            }}
-                                        />
-                                    }
-                                    classes={{
-                                        label: classes.label,
-                                        root: classes.labelRoot
-                                    }}
-                                    label="Delivery"
-                                />
-                                </div> */}
+                                <div>
+                                    <input type="radio" id="pick-up" name="deliveryOption" value="pick-up" checked="checked"
+                                            onChange={(e) => this.setState({deliveryOption: e.target.value})}></input>
+                                    <label for="pick-up">Pick-up</label><br></br>
+                                    <input type="radio" id="delivery" name="deliveryOption" value="delivery"
+                                            onChange={(e) => this.setState({deliveryOption: e.target.value})}></input>
+                                    <label for="delivery">Delivery</label><br></br>
+                                </div>
 
-                                <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong>TOTAL PRICE: 300 DKK</strong></h4>
-                                <Button style={{ float: "right" }} color="success">CHECK OUT</Button>
+
+                                <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong>TOTAL PRICE: {this.state.totalPrice} DKK</strong></h4>
+                                <Button style={{ float: "right" }}
+                                    color="success"
+                                    onClick="checkPrice">CHECK OUT</Button>
                             </div>
                         </GridItem>
                     </GridContainer>
