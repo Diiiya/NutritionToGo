@@ -24,7 +24,7 @@ import { forEach } from "async";
 import { SettingsBackupRestoreTwoTone } from "@material-ui/icons";
 
 
-import customerUtils from "../../utils/customerUtils";
+import customerUtils from "../../utils/customerUtil";
 
 const useStyles = makeStyles(styles);
 const useStyles2 = makeStyles(styles2);
@@ -37,12 +37,12 @@ function checkInput(errorClass, successClass, deliveryTimeMinutes) {
     var myCity = document.getElementById("city");
     var myPhoneNumber = document.getElementById("phoneNumber");
 
-    var firstNameValidation = customerUtils.validateFirstName(myFirstName);
-    var lastNameValidation = customerUtils.validateLastName(myLastName);
-    var addressValidation = customerUtils.validateAddress(myAddress);
-    var postalCodeValidation = customerUtils.validatePostalCode(myPostalCode);
-    var cityValidation = customerUtils.validateCity(myCity);
-    var phoneNumberValidation = customerUtils.validatePhoneNumber(myPhoneNumber);
+    var firstNameValidation = customerUtils.validateFirstName(myFirstName.value);
+    var lastNameValidation = customerUtils.validateLastName(myLastName.value);
+    var addressValidation = customerUtils.validateAddress(myAddress.value);
+    var postalCodeValidation = customerUtils.validatePostalCode(myPostalCode.value);
+    var cityValidation = customerUtils.validateCity(myCity.value);
+    var phoneNumberValidation = customerUtils.validatePhoneNumber(myPhoneNumber.value);
 
     var foundError = false;
 

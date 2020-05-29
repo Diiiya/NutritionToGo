@@ -50,28 +50,11 @@ const OrderItemModel = models.OrderItem;
         })
     }
 
-    exports.getOrders = function(id) {
-        return OrderModel.findAll({
-            where: {restaurantId: id}, 
-            include: [models.OrderItem]
-        })
-        .catch( err => {
-            console.log(err)
-        })
-    }
-
     exports.getOrderById = function(restaurantId, orderId) {
         return OrderModel.findByPk(orderId, {
             where: {restaurantId: restaurantId}, 
             include: [models.OrderItem]
         })
-        .catch( err => {
-            console.log(err)
-        })
-    }
-
-    exports.getCategories = function(id) {
-        return MenuCategoryModel.findAll({where: {restaurantId: id}, include: [models.MenuItem]})
         .catch( err => {
             console.log(err)
         })

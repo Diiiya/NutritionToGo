@@ -39,20 +39,6 @@ exports.createOrder = async (req, res, next) => {
     
 }
 
-//May not be used.
-exports.getOrders = (req, res, next) => {
-
-    let restId = req.params.id;
-
-    restaurant.getOrders(restId)
-    .then( orders => {
-        res.status(200).send(orders);
-    })
-    .catch( err => {
-        next(err);
-    })
-}
-
 exports.getOrderById = (req, res, next) => {
 
     let restId = req.params.id;
@@ -61,20 +47,6 @@ exports.getOrderById = (req, res, next) => {
     restaurant.getOrderById(restId, orderId)
     .then( order => {
         res.status(200).send(order);
-    })
-    .catch( err => {
-        next(err);
-    })
-}
-
-//May not be used.
-exports.getCategoriesById = (req, res, next) => {
-
-    let restId = req.params.id
-
-    restaurant.getCategories(restId)
-    .then( categories => {
-        res.status(200).send(categories);
     })
     .catch( err => {
         next(err);
