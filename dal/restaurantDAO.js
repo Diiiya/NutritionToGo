@@ -5,8 +5,6 @@ const MenuItemModel = models.MenuItem;
 const OrderModel = models.Order;
 const OrderItemModel = models.OrderItem;
 
-
-
     exports.getAll = function () {
         return RestaurantModel.findAll()
         .catch( err => {
@@ -61,8 +59,7 @@ const OrderItemModel = models.OrderItem;
             console.log(err)
         })
     }
-    
-    //iza
+
     exports.getOrderById = function(restaurantId, orderId) {
         return OrderModel.findByPk(orderId, {
             where: {restaurantId: restaurantId}, 
@@ -79,10 +76,3 @@ const OrderItemModel = models.OrderItem;
             console.log(err)
         })
     }
-
-    /*getMenuItems(id, cid) {
-        MenuCategory.findAll({where: {restaurantId: id}, include: [models.MenuItems]})
-        .then( menuCategories => {
-            
-        })
-    }*/

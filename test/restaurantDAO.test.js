@@ -24,14 +24,7 @@ before(async function () {
 
 })
 
-/*
-after( async function() { //uncomment this if you need a clean database after the tests, e.g. no test data within DB
-    this.timeout(15000);
-    await cleanDB();
-})
-*/
-
-describe('RestaurantDAO', async function () {
+describe('restaurantDAO tests', async function () {
     //this.timeout(5000); //if test fails, try uncomment this
 
     context('getAll() tests', async function () {

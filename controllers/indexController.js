@@ -7,7 +7,6 @@ exports.index = (req, res, next) => {
         res.status(200).send(restaurants)
     })
     .catch( err => {
-        //res.status(500).send(err);
         next(err);
     })
 }
@@ -18,11 +17,9 @@ exports.getByid = (req, res, next) => {
 
     restaurant.getById(restId)
     .then( restaurant => {
-        //console.log(restaurant)
         res.status(200).send(restaurant)
     })
     .catch( err => {
-        //res.status(500).send({err: err});
         next(err);
     })
 }
@@ -42,6 +39,7 @@ exports.createOrder = async (req, res, next) => {
     
 }
 
+//May not be used.
 exports.getOrders = (req, res, next) => {
 
     let restId = req.params.id;
@@ -51,12 +49,10 @@ exports.getOrders = (req, res, next) => {
         res.status(200).send(orders);
     })
     .catch( err => {
-        //res.status(500).send(err);
         next(err);
     })
 }
 
-//iza
 exports.getOrderById = (req, res, next) => {
 
     let restId = req.params.id;
@@ -67,11 +63,11 @@ exports.getOrderById = (req, res, next) => {
         res.status(200).send(order);
     })
     .catch( err => {
-        //res.status(500).send(err);
         next(err);
     })
 }
 
+//May not be used.
 exports.getCategoriesById = (req, res, next) => {
 
     let restId = req.params.id
@@ -81,22 +77,6 @@ exports.getCategoriesById = (req, res, next) => {
         res.status(200).send(categories);
     })
     .catch( err => {
-        //res.status(500).send(err);
         next(err);
     })
 }
-/*
-exports.getMenuItems = (req, res, next) => {
-
-    let restId = req.params.id
-    let catId = req.params.cid
-
-    restaurant.getMenuItems(restId, catId)
-    .then( menuItems => {
-        res.status(200).send(menuItems)
-    })
-    .catch( err => {
-        next(err)
-    })
-
-}*/
