@@ -16,6 +16,7 @@ ReactDOM.render(
   <Router history={hist}>
     <Switch>      
       <Route path="/restaurant-page/:id"  render={props => <RestaurantPage {...props} />} />
+
       <Route path="/customer-details-page" component={CustomerDetailsPage} />
       <Route path="/delivery-details-page" component={DeliveryDetailsPage} />
       <Route path="/" render={props => <RestaurantResultsPage {...props} />} />
