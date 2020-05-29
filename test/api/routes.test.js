@@ -1,10 +1,10 @@
 //Test data import
 const testData = require('./testData');
 
-const app = require('../server');
+const app = require('../../server');
 const chai = require('chai');
 const sinon = require('sinon');
-const Restaurant = require('../dal/restaurantDAO');
+const Restaurant = require('../../dal/restaurantDAO');
 const request = require('supertest');
 const expect = chai.expect;
 

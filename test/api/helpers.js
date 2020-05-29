@@ -4,7 +4,7 @@
  * preparings or settings 
  */
 
- const models = require('../db/models');
+ const models = require('../../db/models');
  const RestaurantModel = models.Restaurant;
  const MenuCategoryModel = models.MenuCategory;
  const MenuItemModel = models.MenuItem;

@@ -11,7 +11,7 @@ const assert = chai.assert;
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
-const restaurant = require('../dal/restaurantDAO');
+const restaurant = require('../../dal/restaurantDAO');
 const helpers = require('./helpers');
 
 const cleanDB = helpers.cleanDB;
