@@ -37,206 +37,73 @@ function checkInput(errorClass, successClass, deliveryTimeMinutes) {
     var myCity = document.getElementById("city");
     var myPhoneNumber = document.getElementById("phoneNumber");
 
-    var validData = customerUtils.validate(errorClass, successClass, myFirstName, myLastName, myAddress, myPostalCode, myCity, myPhoneNumber);
+    var firstNameValidation = customerUtils.validateFirstName(myFirstName);
+    var lastNameValidation = customerUtils.validateLastName(myLastName);
+    var addressValidation = customerUtils.validateAddress(myAddress);
+    var postalCodeValidation = customerUtils.validatePostalCode(myPostalCode);
+    var cityValidation = customerUtils.validateCity(myCity);
+    var phoneNumberValidation = customerUtils.validatePhoneNumber(myPhoneNumber);
 
-    if(validData){
+    var foundError = false;
+
+    if (firstNameValidation == "ok") {
+        myFirstName.className = successClass;
+    } else {
+        myFirstName.className = errorClass;
+        alert(firstNameValidation);
+        foundError = true;
+    }
+
+    if (lastNameValidation == "ok") {
+        myLastName.className = successClass;
+    } else if (!foundError) {
+        myLastName.className = errorClass;
+        alert(lastNameValidation);
+        foundError = true;
+    }
+
+    if (addressValidation == "ok") {
+        myAddress.className = successClass;
+    } else if (!foundError) {
+        myAddress.className = errorClass;
+        alert(addressValidation);
+        foundError = true;
+    }
+
+    if (postalCodeValidation == "ok") {
+        myPostalCode.className = successClass;
+    } else if (!foundError) {
+        myPostalCode.className = errorClass;
+        alert(postalCodeValidation);
+        foundError = true;
+    }
+
+    if (cityValidation == "ok") {
+        myCity.className = successClass;
+    } else if (!foundError) {
+        myCity.className = errorClass;
+        alert(cityValidation);
+        foundError = true;
+    }
+
+    if (phoneNumberValidation == "ok") {
+        myPhoneNumber.className = successClass;
+    } else if (!foundError) {
+        myPhoneNumber.className = errorClass;
+        alert(phoneNumberValidation);
+        foundError = true;
+    }
+
+    if (!foundError) {
+        localStorage.setItem("firstName", myFirstName.value);
+        localStorage.setItem("lastName", myLastName.value);
+        localStorage.setItem("address", myAddress.value);
+        localStorage.setItem("postalCode", myPostalCode.value);
+        localStorage.setItem("city", myCity.value);
+        localStorage.setItem("phoneNumber", myPhoneNumber.value);
+
         myPostMethod(myFirstName.value, myLastName.value, myAddress.value, myPostalCode.value, myCity.value, myPhoneNumber.value, deliveryTimeMinutes)
     }
-    
-/*
-    //=============================================First Name=====================================================
-    if (myFirstName.value.length === 1 || myFirstName.value.length > 40) {
-        myFirstName.className = errorClass;
-        alert("error in first name");
-    }
-    else if (myFirstName.value.length === 0) {
-        alert("empty first name");
-    }
-    else {
-        var letterNumber = /^[a-z-A-ZæøåÆØÅ ]+$/;
-        if (myFirstName.value.match(letterNumber) && myFirstName.value[0] !== "-" && myFirstName.value[myFirstName.value.length - 1] !== "-" && myFirstName.value !== "--") {
-            var repeatedDash = false;
-            for (let i = 0; i < myFirstName.value.length; i++) {
-                if (myFirstName.value[i] === "-") {
-                    if (myFirstName.value[i + 1] === "-") {
-                        repeatedDash = true;
-                    }
-                }
-            }
-
-            if (repeatedDash === false) {
-                myFirstName.className = successClass;
-
-                //=============================================Last Name=====================================================
-                if (myLastName.value.length === 1 || myLastName.value.length > 60 || myLastName.value[0] === "-" || myLastName.value[myLastName.value.length - 1] === "-") {
-                    myLastName.className = errorClass;
-                    alert("error in last name")
-                }
-                else if (myLastName.value.length === 0) {
-                    alert("empty last name");
-                }
-                else {
-                    if (myLastName.value.match(letterNumber)) {
-
-                        for (let i = 0; i < myLastName.value.length; i++) {
-                            if (myLastName.value[i] === "-") {
-                                if (myLastName.value[i + 1] === "-") {
-                                    repeatedDash = true;
-                                }
-                            }
-                        }
-
-                        if (repeatedDash === false) {
-                            myLastName.className = successClass;
-
-                            //=============================================Address=====================================================
-                            if (myAddress.value.length === 1 || myAddress.value.length > 120 || myAddress.value[0] === "-" || myAddress.value[myAddress.value.length - 1] === "-" || myAddress.value[0] === "." || myAddress.value[myAddress.value.length - 1] === "," || myAddress.value[0] === ",") {  //twice characters next to each other
-                                myAddress.className = errorClass;
-                                alert("error in address");
-                            }
-                            else if (myAddress.value.length === 0) {
-                                alert("empty address");
-                            }
-                            else {
-                                var letterNumber2 = /^[a-z-.,A-ZæøåÆØÅ0-9 ]+$/;
-                                if (myAddress.value.match(letterNumber2)) {
-
-                                    for (let i = 0; i < myAddress.value.length; i++) {
-                                        if (myAddress.value[i] === "-") {
-                                            if (myAddress.value[i + 1] === "-") {
-                                                repeatedDash = true;
-                                            }
-                                        }
-                                    }
-
-                                    if (repeatedDash === false) {
-                                        myAddress.className = successClass;
-
-                                        //=============================================Postal Code=====================================================
-                                        if (myPostalCode.value.length !== 4) {
-                                            if (myPostalCode.value.length === 0) {
-                                                alert("empty postal code");
-                                            }
-                                            else {
-                                                myPostalCode.className = errorClass;
-                                                alert("error in postal code");
-                                            }
-
-                                        }
-                                        else {
-                                            var Number = /^[0-9]+$/;
-                                            if (myPostalCode.value.match(Number) && (myPostalCode.value > 1300 && myPostalCode.value < 9991)) {
-
-                                                myPostalCode.className = successClass;
-
-                                                //=============================================City=====================================================
-                                                if (myCity.value.length < 2 || myCity.value.length > 60 || myCity.value[0] === "-" || myCity.value[myCity.value.length - 1] === "-") {
-
-                                                    if (myCity.value.length === 0) {
-                                                        alert("empty city");
-                                                    }
-                                                    else {
-                                                        myCity.className = errorClass;
-                                                        alert("error in city");
-                                                    }
-                                                }
-                                                else {
-                                                    if (myCity.value.match(letterNumber)) {
-
-                                                        for (let i = 0; i < myCity.value.length; i++) {
-                                                            if (myCity.value[i] === "-") {
-                                                                if (myCity.value[i + 1] === "-") {
-                                                                    repeatedDash = true;
-                                                                }
-                                                            }
-                                                        }
-
-                                                        if (repeatedDash === false) {
-                                                            myCity.className = successClass;
-
-                                                            //=============================================Phone Number=====================================================
-                                                            if (myPhoneNumber.value.length !== 8) {
-                                                                if (myPhoneNumber.value.length === 0) {
-                                                                    alert("empty phone number");
-                                                                }
-                                                                else {
-                                                                    myPhoneNumber.className = errorClass;
-                                                                    alert("error in phone number");
-                                                                }
-                                                            }
-                                                            else {
-                                                                if (myPhoneNumber.value.match(Number)) {
-                                                                    myPhoneNumber.className = successClass;
-
-                                                                    localStorage.setItem("firstName", myFirstName.value);
-                                                                    localStorage.setItem("lastName", myLastName.value);
-                                                                    localStorage.setItem("address", myAddress.value);
-                                                                    localStorage.setItem("postalCode", myPostalCode.value);
-                                                                    localStorage.setItem("city", myCity.value);
-                                                                    localStorage.setItem("phoneNumber", myPhoneNumber.value);
-
-                                                                    myPostMethod(myFirstName.value, myLastName.value, myAddress.value, myPostalCode.value, myCity.value, myPhoneNumber.value, deliveryTimeMinutes)
-
-                                                                }
-                                                                else {
-                                                                    myPhoneNumber.className = errorClass;
-                                                                    alert("error in phone number");
-                                                                }
-                                                            }
-                                                        }
-                                                        else {
-                                                            myCity.className = errorClass;
-                                                            alert("repeated dash in city");
-                                                            repeatedDash = false;
-                                                        }
-                                                    }
-                                                    else {
-                                                        myCity.className = errorClass;
-                                                        alert("error in city");
-                                                    }
-                                                }
-                                            }
-                                            else {
-                                                myPostalCode.className = errorClass;
-                                                alert("error in postal code");
-                                            }
-                                        }
-                                    }
-                                    else {
-                                        myAddress.className = errorClass;
-                                        alert("repeated dash in address");
-                                        repeatedDash = false;
-                                    }
-                                }
-                                else {
-                                    myAddress.className = errorClass;
-                                    alert("error in address");
-                                }
-                            }
-                        }
-                        else {
-                            myLastName.className = errorClass;
-                            alert("repeated dash in last name");
-                            repeatedDash = false;
-                        }
-                    }
-                    else {
-                        myLastName.className = errorClass;
-                        alert("error in last name");
-                    }
-                }
-            }
-            else {
-                myFirstName.className = errorClass;
-                alert("repeated dash in first name");
-                repeatedDash = false;
-            }
-        }
-        else {
-            myFirstName.className = errorClass;
-            alert("error in first name");
-        }
-    }*/
 }
 
 function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, cityPost, phoneNumberPost, deliveryTimeMi) {

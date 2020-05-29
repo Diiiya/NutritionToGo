@@ -1,50 +1,9 @@
-exports.validate = function (errorClass, successClass, myFirstName, myLastName, myAddress, myPostalCode, myCity, myPhoneNumber) {
-    var validFirstName = validateFirstName(errorClass, successClass, myFirstName);
-
-    if (validFirstName) {
-        var validLastName = validateLastName(errorClass, successClass, myLastName);
-
-        if (validLastName) {
-            var validAddress = validateAddress(errorClass, successClass, myAddress);
-
-            if (validAddress) {
-                var validPostalCode = validatePostalCode(errorClass, successClass, myPostalCode);
-
-                if (validPostalCode) {
-                    var validCity = validateCity(errorClass, successClass, myCity);
-
-                    if (validCity) {
-                        var validPhoneNumber = validatePhoneNumber(errorClass, successClass, myPhoneNumber);
-                        if (validPhoneNumber) {
-                            localStorage.setItem("firstName", myFirstName.value);
-                            localStorage.setItem("lastName", myLastName.value);
-                            localStorage.setItem("address", myAddress.value);
-                            localStorage.setItem("postalCode", myPostalCode.value);
-                            localStorage.setItem("city", myCity.value);
-                            localStorage.setItem("phoneNumber", myPhoneNumber.value);
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-
-    }
-    else {
-        return false;
-    }
-}
-
-//=============================================First Name=====================================================
-function validateFirstName(errorClass, successClass, myFirstName) {
+exports.validateFirstName = function(myFirstName) {
     if (myFirstName.value.length == 0) {
-        alert("empty first name");
-        return false;
+        return "empty first name";
     }
     if (myFirstName.value.length == 1 || myFirstName.value.length > 40) {
-        myFirstName.className = errorClass;
-        alert("error in first name");
-        return false;
+        return "error in first name";
     }
     else {
         var letterNumber = /^[a-z-A-ZæøåÆØÅ ]+$/;
@@ -59,36 +18,26 @@ function validateFirstName(errorClass, successClass, myFirstName) {
             }
 
             if (repeatedDash === false) {
-                myFirstName.className = successClass;
-                return true;
+                return "ok";
 
             }
             else {
-                myFirstName.className = errorClass;
-                alert("repeated dash in first name");
-                repeatedDash = false;
-                return false
+                return "repeated dash in first name";
             }
         }
         else {
-            myFirstName.className = errorClass;
-            alert("error in first name");
-            return false;
+            return "error in first name";
         }
     }
 
 }
 
-function validateLastName(errorClass, successClass, myLastName) {
-    //=============================================Last Name=====================================================
+exports.validateLastName = function(myLastName) {
     if (myLastName.value.length === 1 || myLastName.value.length > 60 || myLastName.value[0] === "-" || myLastName.value[myLastName.value.length - 1] === "-") {
-        myLastName.className = errorClass;
-        alert("error in last name")
-        return false;
+        return "error in last name";
     }
     else if (myLastName.value.length === 0) {
-        alert("empty last name");
-        return false;
+        return "empty last name";
     }
     else {
         var letterNumber = /^[a-z-A-ZæøåÆØÅ ]+$/;
@@ -103,34 +52,24 @@ function validateLastName(errorClass, successClass, myLastName) {
             }
 
             if (repeatedDash === false) {
-                myLastName.className = successClass;
-                return true;
+                return "ok";
             }
             else {
-                myLastName.className = errorClass;
-                alert("repeated dash in last name");
-                repeatedDash = false;
-                return false;
+                return "repeated dash in last name";
             }
         }
         else {
-            myLastName.className = errorClass;
-            alert("error in last name");
-            return false;
+            return "error in last name";
         }
     }
 }
 
-//=============================================Address=====================================================
-function validateAddress(errorClass, successClass, myAddress) {
+exports.validateAddress = function(myAddress) {
     if (myAddress.value.length === 1 || myAddress.value.length > 120 || myAddress.value[0] === "-" || myAddress.value[myAddress.value.length - 1] === "-" || myAddress.value[0] === "." || myAddress.value[myAddress.value.length - 1] === "," || myAddress.value[0] === ",") {  //twice characters next to each other
-        myAddress.className = errorClass;
-        alert("error in address");
-        return false;
+        return "error in address";
     }
     else if (myAddress.value.length === 0) {
-        alert("empty address");
-        return false;
+        return "empty address";
     }
     else {
         var letterNumber2 = /^[a-z-.,A-ZæøåÆØÅ0-9 ]+$/;
@@ -145,67 +84,46 @@ function validateAddress(errorClass, successClass, myAddress) {
             }
 
             if (repeatedDash === false) {
-                myAddress.className = successClass;
-                return true;
+                return "ok";
             }
             else {
-                myAddress.className = errorClass;
-                alert("repeated dash in address");
-                repeatedDash = false;
-                return false;
+                return "repeated dash in address";
             }
         }
         else {
-            myAddress.className = errorClass;
-            alert("error in address");
-            return false;
+            return "error in address";
         }
     }
 }
 
-//=============================================Postal Code=====================================================
-function validatePostalCode(errorClass, successClass, myPostalCode) {
+exports.validatePostalCode = function(myPostalCode) {
     if (myPostalCode.value.length !== 4) {
         if (myPostalCode.value.length === 0) {
-            alert("empty postal code");
-            return false;
+            return "empty postal code";
         }
         else {
-            myPostalCode.className = errorClass;
-            alert("error in postal code");
-            return false;
+            return "error in postal code";
         }
-
     }
     else {
         var Number = /^[0-9]+$/;
         if (myPostalCode.value.match(Number) && (myPostalCode.value > 1300 && myPostalCode.value < 9991)) {
-
-            myPostalCode.className = successClass;
-            return true;
-
+            return "ok";
         }
         else {
-            myPostalCode.className = errorClass;
-            alert("error in postal code");
-            return false;
+            return "error in postal code";
         }
     }
-
 }
 
-//=============================================City=====================================================
-function validateCity(errorClass, successClass, myCity) {
+exports.validateCity = function(myCity) {
     if (myCity.value.length < 2 || myCity.value.length > 60 || myCity.value[0] === "-" || myCity.value[myCity.value.length - 1] === "-") {
 
         if (myCity.value.length === 0) {
-            alert("empty city");
-            return false;
+            return "empty city";
         }
         else {
-            myCity.className = errorClass;
-            alert("error in city");
-            return false;
+            return "error in city";
         }
     }
     else {
@@ -221,48 +139,34 @@ function validateCity(errorClass, successClass, myCity) {
             }
 
             if (repeatedDash === false) {
-                myCity.className = successClass;
-                return true;
-
+                return "ok";
             }
             else {
-                myCity.className = errorClass;
-                alert("repeated dash in city");
-                repeatedDash = false;
-                return false;
+                return "repeated dash in city";
             }
         }
         else {
-            myCity.className = errorClass;
-            alert("error in city");
-            return false;
+            return "error in city";
         }
     }
 }
 
-//=============================================Phone Number=====================================================
-function validatePhoneNumber(errorClass, successClass, myPhoneNumber) {
+exports.validatePhoneNumber = function(myPhoneNumber) {
     if (myPhoneNumber.value.length !== 8) {
         if (myPhoneNumber.value.length === 0) {
-            alert("empty phone number");
-            return false;
+            return "empty phone number";
         }
         else {
-            myPhoneNumber.className = errorClass;
-            alert("error in phone number");
-            return false;
+            return "error in phone number";
         }
     }
     else {
         var Number = /^[0-9]+$/;
         if (myPhoneNumber.value.match(Number)) {
-            myPhoneNumber.className = successClass;
-            return true;
+            return "ok";
         }
         else {
-            myPhoneNumber.className = errorClass;
-            alert("error in phone number");
-            return false;
+            return "error in phone number";
         }
     }
 }
