@@ -28,8 +28,8 @@ export default class RestaurantPage extends React.Component {
             restaurantId: props.match.params.id,
             item: [],
             basket: [],
-            temp: false,
-            deliveryOption: "",
+            isRestaurantOpen: false,
+            deliveryOption: "pick-up",
             totalPrice: 0
         };
         this.addToBasket = this.addToBasket.bind(this);
@@ -52,6 +52,15 @@ export default class RestaurantPage extends React.Component {
     addToBasket(item) {
         var basket = this.state.basket.concat(item)
         var totalPrice = this.state.totalPrice + item.price;
+
+        if ((totalPrice < this.state.restaurant.deliveryLowerBoundary) && (this.state.deliveryOption == "delivery")) {
+            totalPrice = this.state.restaurant.deliveryLowerBoundary;
+        }
+
+        if ((totalPrice < this.state.restaurant.deliveryUpperBoundary) && (this.state.deliveryOption == "delivery") && (this.state.restaurant.deliveryPrice != null)) {
+            totalPrice += this.state.restaurant.deliveryPrice;
+        }
+
         this.setState(prevState => {
             return {
                 basket: basket,
@@ -66,14 +75,14 @@ export default class RestaurantPage extends React.Component {
 
     isOpen() {
         if ((this.state.hour * 100 + this.state.minutes / 60 >= this.state.restaurant.openAtHour) && (this.state.hour * 100 + this.state.minutes / 60 <= this.state.restaurant.closedAtHour)) {
-            this.setState({ temp: true });
+            this.setState({ isRestaurantOpen: true });
         } else {
         }
     }
 
     render() {
         console.log("daata: " + this.state.restaurant.name + " - " + this.state.restaurantId)
-        console.log("is opne " + this.state.temp)
+        console.log("delivery option " + this.state.deliveryOption)
 
         let isOpen;
         if ((this.state.hour * 100 + this.state.minutes / 60 >= this.state.restaurant.openAtHour) && (this.state.hour * 100 + this.state.minutes / 60 <= this.state.restaurant.closedAtHour)) {
@@ -147,7 +156,7 @@ export default class RestaurantPage extends React.Component {
                                                             <h4><strong>{item.itemName}</strong></h4>
                                                             <h4>{item.price} DKK</h4>
                                                             {(() => {
-                                                                if (this.state.temp) {
+                                                                if (this.state.isRestaurantOpen) {
                                                                     return <Button color="success"
                                                                         style={{ width: "100%" }}
                                                                         onClick={() => this.addToBasket(item)}>ORDER</Button>;
@@ -180,14 +189,19 @@ export default class RestaurantPage extends React.Component {
                                 </div>
 
                                 <div>
-                                    <input type="radio" id="pick-up" value="pick-up" checked="checked"></input>
+                                    <input type="radio" id="pick-up" name="deliveryOption" value="pick-up" checked="checked"
+                                            onChange={(e) => this.setState({deliveryOption: e.target.value})}></input>
                                     <label for="pick-up">Pick-up</label><br></br>
-                                    <input type="radio" id="delivery" value="delivery"></input>
+                                    <input type="radio" id="delivery" name="deliveryOption" value="delivery"
+                                            onChange={(e) => this.setState({deliveryOption: e.target.value})}></input>
                                     <label for="delivery">Delivery</label><br></br>
                                 </div>
 
+
                                 <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong>TOTAL PRICE: {this.state.totalPrice} DKK</strong></h4>
-                                <Button style={{ float: "right" }} color="success">CHECK OUT</Button>
+                                <Button style={{ float: "right" }}
+                                    color="success"
+                                    onClick="checkPrice">CHECK OUT</Button>
                             </div>
                         </GridItem>
                     </GridContainer>
