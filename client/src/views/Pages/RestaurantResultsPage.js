@@ -26,25 +26,6 @@ export default class RestaurantResultsPage extends React.Component {
                     color="dark"
                 />
                 <RestaurantList />
-                {/*  <div className={classes.container}>
-                    <h3><strong>CHOOSE A RESTAURANT</strong></h3>
-                    <GridContainer style={{ backgroundColor: "white" }}>
-                        {data.map(restaurant =>
-                            <Link to={`/restaurant-page/${restaurant.id}`}>
-                                <GridItem xs={12} sm={12} md={12} style={{ paddingLeft: "15" }}>
-                                    <h4 style={{ textAlignment: "center" }}><strong>{restaurant.id}</strong></h4>
-                                    <img
-                                        src={restaurantImage}
-                                        alt="..."
-                                        height="230"
-                                        width="100%"
-                                    />
-                                    <Button color="success" style={{ width: "100%" }}>ORDER NOW</Button>
-                                </GridItem>
-                            </Link>
-                        )}
-                    </GridContainer>
-                        </div> */}
             </div>
         )
     };
