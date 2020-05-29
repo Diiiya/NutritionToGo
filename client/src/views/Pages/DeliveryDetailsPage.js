@@ -17,18 +17,27 @@ import styles from "assets/jss/material-kit-react/views/componentsSections/typog
 import { Link } from "react-router-dom";
 const useStyles = makeStyles(styles);
 
+function setMyBasket() {
+    var basket = JSON.parse(localStorage.getItem("orderedItems"));
+
+    var htmlBasket = "";
+
+    basket.forEach(item => {
+
+        htmlBasket += '<div><h4 style={{ display: "inline-block", marginRight: "120px" }}>' + item.itemName + '</h4><h4 style={{ display: "inline-block" }}>' + item.price + 'DKK</h4><hr></hr></div>';
+    });
+
+    return { __html: htmlBasket };
+}
 
 export default function DeliveryDetailsPage() {
-    console.log("restaurant: " + localStorage.getItem("orderedRestaurantId"));
-    console.log("order: ", localStorage.getItem("orderId"));
-    console.log(`http://localhost:3000/api/restaurants/${localStorage.getItem("orderedRestaurantId")}/order/${localStorage.getItem("orderId")}`);
+
     const classes = useStyles();
-    const [selectedEnabled, setSelectedEnabled] = React.useState("b");
 
     const [data, setData] = useState({ restaurant: [] });
-    
+
     const [orderData, setOrder] = useState({ order: [] });
-    
+
     useEffect(async () => {
         const fetchData = async () => {
             const result = await axios(`http://localhost:3000/api/restaurants/${localStorage.getItem("orderedRestaurantId")}`);
@@ -61,8 +70,8 @@ export default function DeliveryDetailsPage() {
                         />
                     </GridItem>
                     <GridItem xs={12} sm={12} md={3}>
-                            <h3><strong>{data.name}</strong></h3>
-                            <h5>{data.address}</h5>
+                        <h3><strong>{data.name}</strong></h3>
+                        <h5>{data.address}</h5>
                     </GridItem>
                 </GridContainer>
 
@@ -70,77 +79,20 @@ export default function DeliveryDetailsPage() {
 
                     <GridItem xs={12} sm={12} md={5} style={{ marginTop: "60px", backgroundColor: "white", height: "450px", borderRight: '10px solid #e5e5e5' }}>
                         <div style={{ margin: "20px" }}>
-                            <div>
-                                <div>
-                                    <h4 style={{ display: "inline-block" }}>Caesar salad</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
-                                    <h4 style={{ display: "inline-block" }}>150 DKK</h4>
-                                </div>
-                                <hr></hr>
-                                <div>
-                                    <h4 style={{ display: "inline-block" }}>Greek salad</h4>
-                                    <h4 style={{ display: "inline-block", marginLeft: "120px", marginRight: "30px" }}>- 1 +</h4>
-                                    <h4 style={{ display: "inline-block" }}>150 DKK</h4>
-                                </div>
-                                <hr></hr>
+                            <div dangerouslySetInnerHTML={setMyBasket()}>
                             </div>
 
                             <div style={{ marginTop: "30px" }}>
-                                <FormControlLabel
-                                    control={
-                                        <Radio
-                                            checked={selectedEnabled === "a"}
-                                            onChange={() => setSelectedEnabled("a")}
-                                            value="a"
-                                            name="radio button enabled"
-                                            aria-label="A"
-                                            icon={
-                                                <FiberManualRecord className={classes.radioUnchecked} />
-                                            }
-                                            checkedIcon={
-                                                <FiberManualRecord className={classes.radioChecked} />
-                                            }
-                                            classes={{
-                                                checked: classes.radio,
-                                                root: classes.radioRoot
-                                            }}
-                                        />
-                                    }
-                                    classes={{
-                                        label: classes.label,
-                                        root: classes.labelRoot
-                                    }}
-                                    label="Pick-up"
-                                />
-                                <FormControlLabel
-                                    control={
-                                        <Radio
-                                            checked={selectedEnabled === "b"}
-                                            onChange={() => setSelectedEnabled("b")}
-                                            value="b"
-                                            name="radio button enabled"
-                                            aria-label="B"
-                                            icon={
-                                                <FiberManualRecord className={classes.radioUnchecked} />
-                                            }
-                                            checkedIcon={
-                                                <FiberManualRecord className={classes.radioChecked} />
-                                            }
-                                            classes={{
-                                                checked: classes.radio,
-                                                root: classes.radioRoot
-                                            }}
-                                        />
-                                    }
-                                    classes={{
-                                        label: classes.label,
-                                        root: classes.labelRoot
-                                    }}
-                                    label="Delivery"
-                                />
+                                <h4>Delivery type: {localStorage.getItem("deliveryType")}</h4>
+                                {/*<input type="radio" id="pick-up" name="deliveryOption" value="pick-up" checked="true"
+                                ></input>
+                                <label for="pick-up">Pick-up</label><br></br>
+                                <input type="radio" id="delivery" name="deliveryOption" value="delivery" checked="false"
+                                ></input>
+                                <label for="delivery">Delivery</label><br></br>*/}
                             </div>
 
-                            <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong>TOTAL PRICE: 300 DKK</strong></h4>
+                            <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong>TOTAL PRICE: {localStorage.getItem("totalOrderPrice")} DKK</strong></h4>
 
                         </div>
                     </GridItem>
@@ -150,7 +102,7 @@ export default function DeliveryDetailsPage() {
                                 <h3 style={{ alignText: "center" }}><strong>YOUR ORDER HAS BEEN PLACED SUCCESFULLY!</strong></h3>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>First name:</h4>
-                                <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{orderData.cusFirstName}</h4>
+                                    <h4 style={{ display: "inline-block", marginLeft: "10px", fontStyle: "italic" }}>{orderData.cusFirstName}</h4>
                                 </div>
                                 <div>
                                     <h4 style={{ display: "inline-block" }}>Last name:</h4>
@@ -177,8 +129,8 @@ export default function DeliveryDetailsPage() {
                                 <h4>Estimated delivery time: <strong id="time">{localStorage.getItem("deliveryTimeMinutes")}</strong></h4>
                             </GridItem>
                         </GridContainer>
-                        <Link to={`/`}>//to={`/restaurant-page/${localStorage.getItem("restaurantId")}`}>
-                            <Button style={{ float: "right" }} color="success">GO BACK TO HOME PAGE</Button>
+                        <Link to={`/`}>
+                            <Button style={{ float: "right" }} color="success">GO BACK TO RESTAURANT PAGE</Button>
                         </Link>
                     </GridItem>
                 </GridContainer>

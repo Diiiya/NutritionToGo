@@ -53,11 +53,11 @@ export default class RestaurantPage extends React.Component {
         var basket = this.state.basket.concat(item)
         var totalPrice = this.state.totalPrice + item.price;
 
-        if ((totalPrice < this.state.restaurant.deliveryLowerBoundary) && (this.state.deliveryOption == "delivery")) {
+        if ((totalPrice < this.state.restaurant.deliveryLowerBoundary) && (this.state.deliveryOption === "delivery")) {
             totalPrice = this.state.restaurant.deliveryLowerBoundary;
         }
 
-        if ((totalPrice < this.state.restaurant.deliveryUpperBoundary) && (this.state.deliveryOption == "delivery") && (this.state.restaurant.deliveryPrice != null)) {
+        if ((totalPrice < this.state.restaurant.deliveryUpperBoundary) && (this.state.deliveryOption === "delivery") && (this.state.restaurant.deliveryPrice != null)) {
             totalPrice += this.state.restaurant.deliveryPrice;
         }
 
@@ -70,8 +70,32 @@ export default class RestaurantPage extends React.Component {
     }
 
     checkPrice() {
+        sessionStorage.setItem("basket", JSON.stringify(this.state.basket));
 
+        var orderPrice = this.state.totalPrice;
+        var totalOrderPrice = 0;
+
+        totalOrderPrice = orderPrice;
+
+        if(this.state.deliveryOption === "delivery"){
+            if(totalOrderPrice < this.state.restaurant.deliveryLowerBoundary){
+                totalOrderPrice = this.state.restaurant.deliveryLowerBoundary;
+            }
+            if(this.state.restaurant.deliveryUpperBoundary != null){
+                if(totalOrderPrice < this.state.restaurant.deliveryUpperBoundary){
+                    totalOrderPrice += this.state.restaurant.deliveryPrice;
+                }
+            }
+        }
+        localStorage.setItem("deliveryType", this.state.deliveryOption);
+        localStorage.setItem("totalOrderPrice", totalOrderPrice);
+        this.goNext();
     }
+
+    goNext(){
+        window.location.href = "/customer-details-page";
+    }
+
 
     isOpen() {
         if ((this.state.hour * 100 + this.state.minutes / 60 >= this.state.restaurant.openAtHour) && (this.state.hour * 100 + this.state.minutes / 60 <= this.state.restaurant.closedAtHour)) {
@@ -82,7 +106,7 @@ export default class RestaurantPage extends React.Component {
 
     render() {
         console.log("daata: " + this.state.restaurant.name + " - " + this.state.restaurantId)
-        console.log("delivery option " + this.state.deliveryOption)
+        //  console.log("delivery option " + this.state.deliveryOption)
 
         localStorage.setItem("restaurantId", this.state.restaurant.id);
 
@@ -203,7 +227,7 @@ export default class RestaurantPage extends React.Component {
                                 <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong>TOTAL PRICE: {this.state.totalPrice} DKK</strong></h4>
                                 <Button style={{ float: "right" }}
                                     color="success"
-                                    onClick="checkPrice">CHECK OUT</Button>
+                                    onClick={() => this.checkPrice()}>CHECK OUT</Button>
                             </div>
                         </GridItem>
                     </GridContainer>
