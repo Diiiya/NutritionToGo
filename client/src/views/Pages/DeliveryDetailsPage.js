@@ -24,13 +24,28 @@ function setMyBasket() {
 
     basket.forEach(item => {
 
-        htmlBasket += '<div><h4 style={{ display: "inline-block", marginRight: "120px" }}>' + item.itemName + '</h4><h4 style={{ display: "inline-block" }}>' + item.price + 'DKK</h4><hr></hr></div>';
+        htmlBasket += '<div><label style={{ display: "inline-block", marginRight: "120px" }}>' + "Name: <strong>" + item.itemName + '</strong></label><label style={{ display: "inline-block" }}>' + " quantity: <strong>" + item.quantity + '</strong></label><label style={{ display: "inline-block" }}>' +  " price: <strong>" + item.price + '</strong>DKK</label><hr></hr></div>';      
     });
 
     return { __html: htmlBasket };
 }
 
+function checkDeliveryType(){
+    var myDelivery = localStorage.getItem("deliveryType");
+    if (myDelivery === "true") {
+        localStorage.setItem("deliveryType", 1);
+        myDelivery = "delivery";
+    }
+    else{
+        localStorage.setItem("deliveryType", 0);
+        myDelivery = "pick-up";
+    }
+    return myDelivery;
+}
+
 export default function DeliveryDetailsPage() {
+
+    var myDelivery = checkDeliveryType();
 
     const classes = useStyles();
 
@@ -83,13 +98,8 @@ export default function DeliveryDetailsPage() {
                             </div>
 
                             <div style={{ marginTop: "30px" }}>
-                                <h4>Delivery type: {localStorage.getItem("deliveryType")}</h4>
-                                {/*<input type="radio" id="pick-up" name="deliveryOption" value="pick-up" checked="true"
-                                ></input>
-                                <label for="pick-up">Pick-up</label><br></br>
-                                <input type="radio" id="delivery" name="deliveryOption" value="delivery" checked="false"
-                                ></input>
-                                <label for="delivery">Delivery</label><br></br>*/}
+                                <h4>Delivery type: {myDelivery}</h4>
+                            
                             </div>
 
                             <h4 style={{ textAlign: "right", marginTop: "20px" }}><strong>TOTAL PRICE: {localStorage.getItem("totalOrderPrice")} DKK</strong></h4>

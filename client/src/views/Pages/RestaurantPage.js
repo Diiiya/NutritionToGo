@@ -51,7 +51,6 @@ export default class RestaurantPage extends React.Component {
 
     checkPrice() {
         sessionStorage.setItem("basket", JSON.stringify(this.state.basket));
-
         localStorage.setItem("deliveryType", this.state.deliveryOption);
         localStorage.setItem("totalOrderPrice", this.state.totalPrice);
         this.goNext();

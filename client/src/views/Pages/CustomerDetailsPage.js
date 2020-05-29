@@ -231,12 +231,6 @@ function checkInput(errorClass, successClass, deliveryTimeMinutes) {
 
 function myPostMethod(firstNamePost, lastNamePost, addressPost, postalCodePost, cityPost, phoneNumberPost, deliveryTimeMi) {
 
-    /*var myDelivery = localStorage.getItem("deliveryType");
-    var deliveryType = 0;
-    if (myDelivery) {
-        deliveryType = 1;
-    }*/
-
     var basketItems = JSON.parse(sessionStorage.getItem("basket"));
 
     var finalOrderItems = [];
@@ -308,7 +302,7 @@ function setMyBasket(){
 
 function checkDeliveryType(){
     var myDelivery = localStorage.getItem("deliveryType");
-    if (myDelivery) {
+    if (myDelivery === "true") {
         localStorage.setItem("deliveryType", 1);
         myDelivery = "delivery";
     }
@@ -320,7 +314,6 @@ function checkDeliveryType(){
 }
 
 export default function CustomerDetailsPage() {
-    //checkDeliveryType();
 
     var myDelivery = checkDeliveryType();
 
