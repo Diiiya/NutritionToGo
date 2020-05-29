@@ -63,7 +63,7 @@ const OrderItemModel = models.OrderItem;
     }
     
     //iza
-    getOrderById(restaurantId, orderId) {
+    exports.getOrderById(restaurantId, orderId) {
         return OrderModel.findByPk(orderId, {
             where: {restaurantId: restaurantId}, 
             include: [models.OrderItem]
